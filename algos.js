@@ -83,8 +83,8 @@
           P(3, T(`Is a[${j}]=${a[j]} < current minimum ${a[min]}? ${better ? 'Yes — new minimum.' : 'No.'}`, `a[${j}]=${a[j]} có nhỏ hơn giá trị nhỏ nhất hiện tại ${a[min]} không? ${better ? 'Có — đây là giá trị nhỏ nhất mới.' : 'Không.'}`), { [min]: 'pivot', [j]: 'compare' }, { i, min, j });
           if (better) min = j;
         }
-        if (min !== i) { [a[i], a[min]] = [a[min], a[i]]; P(4, T(`Swap the minimum ${a[i]} into position ${i}.`, `Đổi chỗ giá trị nhỏ nhất ${a[i]} vào vị trí ${i}.`), { [i]: 'swap', [min]: 'swap' }, { i }); }
-        else P(4, T(`a[${i}] is already the minimum — no swap needed.`, `a[${i}] đã là giá trị nhỏ nhất — không cần đổi chỗ.`), { [i]: 'pivot' }, { i });
+        if (min !== i) { [a[i], a[min]] = [a[min], a[i]]; P(4, T(`Scan finished (j reached the end). Swap the minimum ${a[i]} into position ${i}.`, `Quét xong (j đã tới cuối). Đổi chỗ giá trị nhỏ nhất ${a[i]} vào vị trí ${i}.`), { [i]: 'swap', [min]: 'swap' }, { i }); }
+        else P(4, T(`Scan finished (j reached the end). a[${i}] is already the minimum — no swap needed.`, `Quét xong (j đã tới cuối). a[${i}] đã là giá trị nhỏ nhất — không cần đổi chỗ.`), { [i]: 'pivot' }, { i });
         done.add(i);
       }
       done.add(n - 1); P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
@@ -107,8 +107,9 @@
         while (j > 0) {
           P(2, T(`Is a[${j - 1}]=${a[j - 1]} > a[${j}]=${a[j]}?`, `a[${j - 1}]=${a[j - 1]} có lớn hơn a[${j}]=${a[j]} không?`), { [j - 1]: 'compare', [j]: 'compare' }, { i });
           if (a[j - 1] > a[j]) { [a[j - 1], a[j]] = [a[j], a[j - 1]]; P(3, T('Yes — swap to move it left.', `Có — đổi chỗ để đưa nó sang trái.`), { [j - 1]: 'swap', [j]: 'swap' }, { i }); j--; }
-          else break;
+          else { P(2, T(`No — ${a[j - 1]} ≤ ${a[j]}, so it already sits in the right place. The while condition is false → stop.`, `Không — ${a[j - 1]} ≤ ${a[j]}, nên nó đã đúng chỗ. Điều kiện while sai → dừng.`), { [j]: 'active' }, { i }); break; }
         }
+        if (j === 0) P(2, T(`j reached 0 — the left edge, nothing left to compare → stop.`, `j đã về 0 — mép trái, không còn gì để so sánh → dừng.`), { 0: 'active' }, { i });
       }
       cur = n; P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
@@ -177,7 +178,7 @@
           }
         }
         [a[i], a[hi]] = [a[hi], a[i]]; done.add(i);
-        P(6, T(`Swap pivot ${p} into index ${i} — it is now in its final position.`, `Đưa chốt ${p} vào vị trí ${i} — nó đã ở đúng vị trí cuối cùng.`), { [i]: 'pivot' }, {}, lo, hi);
+        P(6, T(`Scan finished (j reached the pivot). Swap pivot ${p} into index ${i} — it is now in its final position.`, `Quét xong (j đã tới chốt). Đưa chốt ${p} vào vị trí ${i} — nó đã ở đúng vị trí cuối cùng.`), { [i]: 'pivot' }, {}, lo, hi);
         qs(lo, i - 1); qs(i + 1, hi);
       }
       P(0, T('Start quick sort.', `Bắt đầu quick sort.`), {}, {}, 0, n - 1);
@@ -536,7 +537,7 @@
       const P = (line, msg, cls = {}) => st.push({ line, msg, s: G([T('min coins', 'số xu tối thiểu')], cols, [dp], cls, info) });
       P(0, T('Making amount 0 takes 0 coins; every other amount starts as ∞ (unknown).', `Tạo số tiền 0 cần 0 đồng xu; mọi số tiền khác bắt đầu là ∞ (chưa biết).`));
       for (let a = 1; a <= amount; a++) for (const c of cs) {
-        if (c > a) continue;
+        if (c > a) { P(2, T(`Amount ${a}, coin ${c}: ${c} > ${a} — the coin is bigger than the amount, so skip it.`, `Số tiền ${a}, đồng ${c}: ${c} > ${a} — đồng xu lớn hơn số tiền, bỏ qua.`), { [`0,${a}`]: 'active' }); continue; }
         const cand = dp[a - c] + 1, cls = { [`0,${a}`]: 'active', [`0,${a - c}`]: 'compare' };
         if (dp[a - c] === Infinity) P(3, T(`Amount ${a}, coin ${c}: dp[${a - c}] is ∞ — cannot use this coin.`, `Số tiền ${a}, đồng ${c}: dp[${a - c}] là ∞ — không dùng được đồng xu này.`), cls);
         else if (cand < dp[a]) { const was = dp[a] === Infinity ? '∞' : dp[a]; dp[a] = cand; P(3, T(`Amount ${a}, coin ${c}: dp[${a - c}] + 1 = ${cand} — better than ${was}.`, `Số tiền ${a}, đồng ${c}: dp[${a - c}] + 1 = ${cand} — tốt hơn ${was}.`), cls); }
@@ -629,6 +630,7 @@
           place(r + 1);
           if (!found) { q[r] = -1; P(6, T(`Dead end further down — backtrack: remove the queen from row ${r}.`, `Ngõ cụt phía dưới — quay lui: bỏ quân hậu khỏi hàng ${r}.`), { [`${r},${c}`]: 'try' }); }
         }
+        if (!found) P(2, r > 0 ? T(`Row ${r}: c reached ${n} — every column was tried and none is safe → dead end, return to row ${r - 1}.`, `Hàng ${r}: c đã tới ${n} — đã thử mọi cột mà không cột nào an toàn → ngõ cụt, quay về hàng ${r - 1}.`) : T('Row 0: every column was tried — there is no solution.', 'Hàng 0: đã thử mọi cột — không có lời giải.'));
       }
       P(0, T(`Place ${n} queens, one per row, backtracking when stuck.`, `Đặt ${n} quân hậu, mỗi hàng một quân, quay lui khi bị kẹt.`));
       place(0);

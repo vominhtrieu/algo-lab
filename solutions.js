@@ -52,9 +52,10 @@
       const P = (line, msg, v, cls = {}, ptrs = {}) => st.push({ line, msg, s: S(v, { mode: 'cells', cls, ptrs, info: T('goal: a[i] + a[lo] + a[hi] = 0', 'mục tiêu: a[i] + a[lo] + a[hi] = 0') }, { title: T('Triples found', 'Các bộ ba tìm được'), items: res.map(t => `[${t}]`) }) });
       P(0, T('This is the original array. Step 1: sort it.', 'Đây là mảng ban đầu. Bước 1: sắp xếp nó.'), arr);
       P(0, T('Sorted. Now fix one number at a time and search for a pair to its right.', 'Đã sắp xếp. Giờ cố định từng số một và tìm một cặp ở bên phải nó.'), a);
+      let stoppedEarly = false;
       for (let i = 0; i < n - 2; i++) {
         if (i > 0 && a[i] === a[i - 1]) { P(2, T(`a[${i}] = ${a[i]} is the same as the one before — skip it (would repeat triples).`, `a[${i}] = ${a[i]} giống số liền trước — bỏ qua (sẽ lặp bộ ba).`), a, { [i]: 'swap' }, { i }); continue; }
-        if (a[i] > 0) { P(1, T(`a[${i}] = ${a[i]} is positive and everything to the right is bigger, so no triple can sum to 0. Stop.`, `a[${i}] = ${a[i]} là số dương và mọi số bên phải đều lớn hơn, nên không bộ ba nào có tổng 0. Dừng.`), a, { [i]: 'swap' }, { i }); break; }
+        if (a[i] > 0) { P(1, T(`a[${i}] = ${a[i]} is positive and everything to the right is bigger, so no triple can sum to 0. Stop.`, `a[${i}] = ${a[i]} là số dương và mọi số bên phải đều lớn hơn, nên không bộ ba nào có tổng 0. Dừng.`), a, { [i]: 'swap' }, { i }); stoppedEarly = true; break; }
         let lo = i + 1, hi = n - 1;
         P(3, T(`Fix a[${i}] = ${a[i]}. We need two numbers to its right that add up to ${-a[i]}. Put lo = ${lo}, hi = ${hi}.`, `Cố định a[${i}] = ${a[i]}. Cần hai số bên phải có tổng ${-a[i]}. Đặt lo = ${lo}, hi = ${hi}.`), a, { [i]: 'active', [lo]: 'compare', [hi]: 'compare' }, { i, lo, hi });
         while (lo < hi) {
@@ -67,8 +68,9 @@
           } else if (s < 0) { P(7, T(`${s} < 0: too small → move lo right for a bigger number.`, `${s} < 0: quá nhỏ → dịch lo sang phải để lấy số lớn hơn.`), a, cls, { i, lo, hi }); lo++; }
           else { P(8, T(`${s} > 0: too big → move hi left for a smaller number.`, `${s} > 0: quá lớn → dịch hi sang trái để lấy số nhỏ hơn.`), a, cls, { i, lo, hi }); hi--; }
         }
+        P(4, T(`lo (${lo}) ≥ hi (${hi}) → the loop condition lo < hi is false, so a[${i}] = ${a[i]} has no more pairs. Move on to the next i.`, `lo (${lo}) ≥ hi (${hi}) → điều kiện vòng lặp lo < hi sai, nên a[${i}] = ${a[i]} không còn cặp nào nữa. Chuyển sang i tiếp theo.`), a, { [i]: 'active' }, { i, lo: Math.min(lo, n - 1), hi: Math.max(hi, 0) });
       }
-      P(1, T(`Done — ${res.length} unique triple${res.length === 1 ? '' : 's'} found.`, `Xong — tìm được ${res.length} bộ ba khác nhau.`), a);
+      P(1, T(`${stoppedEarly ? 'The loop stopped early. ' : `i reached ${Math.max(n - 2, 0)} — there is no room left for two more numbers on its right, so the outer loop ends. `}Done — ${res.length} unique triple${res.length === 1 ? '' : 's'} found.`, `${stoppedEarly ? 'Vòng lặp đã dừng sớm. ' : `i đã tới ${Math.max(n - 2, 0)} — không còn chỗ cho hai số ở bên phải, nên vòng lặp ngoài kết thúc. `}Xong — tìm được ${res.length} bộ ba khác nhau.`), a);
       return st;
     },
   });
@@ -95,7 +97,7 @@
         if (h[lo] < h[hi]) { P(4, T(`Line ${lo} (${h[lo]}) is the shorter one. Moving ${hi} inward could never raise the height, so move lo right.`, `Cột ${lo} (${h[lo]}) là cột thấp hơn. Dịch ${hi} vào trong không thể làm tăng chiều cao, nên dịch lo sang phải.`), cur); lo++; }
         else { P(4, T(`Line ${hi} (${h[hi]}) is the shorter (or equal) one, so move hi left.`, `Cột ${hi} (${h[hi]}) là cột thấp hơn (hoặc bằng), nên dịch hi sang trái.`), cur); hi--; }
       }
-      P(1, T(`Pointers met. The largest container holds ${best} units of water.`, `Hai con trỏ gặp nhau. Bình lớn nhất chứa ${best} đơn vị nước.`), { [bl]: 'found', [bh]: 'found' });
+      P(1, T(`lo (${lo}) ≥ hi (${hi}) → the loop condition lo < hi is false, so every pair has been ruled out. The largest container holds ${best} units of water.`, `lo (${lo}) ≥ hi (${hi}) → điều kiện vòng lặp lo < hi sai, nghĩa là đã loại hết mọi cặp. Bình lớn nhất chứa ${best} đơn vị nước.`), { [bl]: 'found', [bh]: 'found' });
       return st;
     },
   });
@@ -121,7 +123,7 @@
         ok[lo] = ok[hi] = 'found'; lo++; hi--;
         P(3, T('Move both pointers one step toward the middle.', 'Dịch cả hai con trỏ một bước vào giữa.'));
       }
-      P(4, T('Pointers met without any mismatch → it IS a palindrome.', 'Hai con trỏ gặp nhau mà không có chỗ nào không khớp → ĐÚNG là palindrome.'));
+      P(4, T(`lo (${lo}) ≥ hi (${hi}) → the loop condition lo < hi is false: the pointers met without any mismatch → it IS a palindrome.`, `lo (${lo}) ≥ hi (${hi}) → điều kiện vòng lặp lo < hi sai: hai con trỏ gặp nhau mà không có chỗ nào không khớp → ĐÚNG là palindrome.`));
       return st;
     },
   });
@@ -293,6 +295,7 @@
           dfs(nr, nc, id);
           P(9, T(`Back at (${r},${c}) — try the next direction.`, `Quay lại (${r},${c}) — thử hướng tiếp theo.`), { [`${r},${c}`]: 'active' });
         }
+        P(9, T(`All 4 directions from (${r},${c}) are done → this call ends and returns to the cell that called it.`, `Đã thử xong cả 4 hướng từ (${r},${c}) → lời gọi này kết thúc và quay về ô đã gọi nó.`), { [`${r},${c}`]: 'active' });
       }
       P(0, T('Scan the grid for land, left to right, top to bottom. Water cells are faded.', 'Quét lưới tìm đất, từ trái sang phải, từ trên xuống dưới. Ô nước bị làm mờ.'));
       for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
@@ -358,7 +361,7 @@
         pending = queue.slice(); next = [];
       }
       pending = []; next = [];
-      P(5, fresh === 0 ? T(`No fresh oranges left → answer = ${minutes} minute${minutes === 1 ? '' : 's'}.`, `Không còn cam tươi → đáp án = ${minutes} phút.`) : T(`${fresh} fresh orange${fresh === 1 ? ' is' : 's are'} unreachable (cut off by empty cells) → answer = −1.`, `${fresh} quả cam tươi không với tới được (bị chặn bởi ô trống) → đáp án = −1.`));
+      P(5, fresh === 0 ? T(`fresh = 0 → the loop condition fails, so we stop. No fresh oranges left → answer = ${minutes} minute${minutes === 1 ? '' : 's'}.`, `fresh = 0 → điều kiện vòng lặp sai nên dừng. Không còn cam tươi → đáp án = ${minutes} phút.`) : T(`The queue is empty, so the loop ends — but ${fresh} fresh orange${fresh === 1 ? ' is' : 's are'} unreachable (cut off by empty cells) → answer = −1.`, `Hàng đợi rỗng nên vòng lặp kết thúc — nhưng ${fresh} quả cam tươi không với tới được (bị chặn bởi ô trống) → đáp án = −1.`));
       return st;
     },
   });
@@ -482,7 +485,7 @@
         P(2, T(`From ${i} we can reach ${i + a[i]}, so farthest = ${far}.`, `Từ ${i} có thể đến ${i + a[i]}, nên farthest = ${far}.`), i);
         if (i === curEnd) { jumps++; curEnd = far; P(4, T(`Reached the end of the current range at ${i} → we must jump. jumps = ${jumps}; the new range extends to ${Math.min(curEnd, n - 1)}.`, `Đến cuối phạm vi hiện tại tại ${i} → phải nhảy. jumps = ${jumps}; phạm vi mới kéo dài tới ${Math.min(curEnd, n - 1)}.`), i); }
         else P(3, T(`i = ${i} is still inside the current range (ends at ${curEnd}) → no new jump yet.`, `i = ${i} vẫn trong phạm vi hiện tại (kết thúc tại ${curEnd}) → chưa cần nhảy thêm.`), i);
-        if (curEnd >= n - 1) break;
+        if (curEnd >= n - 1) { P(5, T(`curEnd (${curEnd}) ≥ last index ${n - 1} → the end is already within reach, so stop scanning.`, `curEnd (${curEnd}) ≥ chỉ số cuối ${n - 1} → đã với tới được đích, nên dừng quét.`), i); break; }
       }
       P(5, T(`The end is reachable → the minimum number of jumps is ${jumps}.`, `Đã đến được đích → số bước nhảy tối thiểu là ${jumps}.`), -1);
       return st;
@@ -511,6 +514,7 @@
           dfs(i + 1);
           path.pop(); P(6, T(`Un-choose ${a[i]} (backtrack) → path = ${fmt(path)}.`, `Bỏ chọn ${a[i]} (quay lui) → path = ${fmt(path)}.`), i);
         }
+        P(3, T(`i reached ${n} — no numbers left to try from index ${start} → this call returns to the previous level.`, `i đã tới ${n} — không còn số nào để thử từ chỉ số ${start} → lời gọi này quay về tầng trước.`));
       }
       P(0, T(`Start with an empty path. We expect 2^${n} = ${2 ** n} subsets in total.`, `Bắt đầu với path rỗng. Dự kiến tổng cộng 2^${n} = ${2 ** n} tập con.`));
       dfs(0);
