@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlgoLab — Learn Algorithms Visually</title>
+  <meta name="description" content="Interactive, animated visualizations of common algorithms grouped by category, with practice problems.">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('algolab.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+  <header class="topbar">
+    <button id="menuBtn" class="icon-btn" aria-label="Open menu">☰</button>
+    <a class="brand" href="#/">Algo<span>Lab</span></a>
+    <div class="spacer"></div>
+    <span id="progress" class="progress" title="Practice problems you have ticked off"></span>
+    <button id="themeBtn" class="icon-btn" aria-label="Toggle light / dark theme">◐</button>
+  </header>
+  <div class="shell">
+    <nav id="sidebar" class="sidebar" aria-label="Algorithms">
+      <input id="search" type="search" placeholder="Search algorithms…" aria-label="Search algorithms">
+      <div id="navList"></div>
+    </nav>
+    <div id="scrim" class="scrim"></div>
+    <main id="main"></main>
+  </div>
+  <script src="algos.js"></script>
+  <script src="explain.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
