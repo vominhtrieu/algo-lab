@@ -3,6 +3,8 @@
   const { CATS, ALGOS, GN, GE, ek } = window.ALGO_DATA;
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SOLS = window.SOLUTIONS || [];
+  const solBySlug = Object.fromEntries(SOLS.map(x => [x.slug, x]));
   const byId = Object.fromEntries(ALGOS.map(a => [a.id, a]));
   const catOf = Object.fromEntries(CATS.map(c => [c.id, c]));
   const LABEL = { compare: 'Comparing', swap: 'Swapping', sorted: 'Sorted', pivot: 'Pivot', active: 'Active', found: 'Found', current: 'Current', frontier: 'Discovered', done: 'Finished', look: 'Examining', tree: 'Tree edge', try: 'Trying', bad: 'Conflict', ok: 'Safe', dim: 'Ignored' };
@@ -22,7 +24,10 @@
       <div class="nav-cat" data-cat="${c.id}">
         <h4><span class="dot" style="--h:${c.hue}"></span>${esc(c.name)}</h4>
         ${ALGOS.filter(a => a.cat === c.id).map(a => `<a href="#/${a.id}" data-id="${a.id}" data-name="${esc(a.name.toLowerCase())}">${esc(a.name)}</a>`).join('')}
-      </div>`).join('');
+      </div>`).join('') + `
+      <div class="nav-cat"><h4><span class="dot" style="--h:200"></span>Problem walkthroughs</h4>
+        ${SOLS.map(x => `<a href="#/p/${x.slug}" data-id="p/${x.slug}" data-name="${esc(x.title.toLowerCase())}">${esc(x.title)}</a>`).join('')}
+      </div>`;
   }
   function markNav(id) {
     document.querySelectorAll('#navList a').forEach(a => a.classList.toggle('on', a.dataset.id === id));
@@ -49,7 +54,8 @@
     stopPlayer(); closeMenu();
     const id = location.hash.replace(/^#\/?/, '');
     window.scrollTo(0, 0);
-    if (byId[id]) { markNav(id); renderAlgo(byId[id]); document.title = `${byId[id].name} — AlgoLab`; }
+    if (id.startsWith('p/') && solBySlug[id.slice(2)]) { const x = solBySlug[id.slice(2)]; markNav(id); renderSolution(x); document.title = `${x.title} — AlgoLab`; }
+    else if (byId[id]) { markNav(id); renderAlgo(byId[id]); document.title = `${byId[id].name} — AlgoLab`; }
     else { markNav(null); renderHome(); document.title = 'AlgoLab — Learn Algorithms Visually'; }
   }
 
@@ -66,7 +72,12 @@
           <div class="cards">${ALGOS.filter(a => a.cat === c.id).map(a => `
             <a class="card-link" style="--h:${c.hue}" href="#/${a.id}"><b>${esc(a.name)}</b><small>Time ${esc(a.time)} · ${a.problems.length} problems</small></a>`).join('')}
           </div>
-        </section>`).join('')}`;
+        </section>`).join('')}
+      <section class="cat-block">
+        <h2><span class="dot" style="--h:200"></span>Problem walkthroughs</h2>
+        <p>Animated solutions to well-known coding-interview problems.</p>
+        <div class="cards">${SOLS.map(x => `<a class="card-link" style="--h:200" href="#/p/${x.slug}"><b>${esc(x.title)}</b><small><span class="badge ${x.diff}">${x.diff}</span> ${esc(x.time)}</small></a>`).join('')}</div>
+      </section>`;
   }
 
   /* ---------- visualization renderers (build once, update in place) ---------- */
@@ -159,7 +170,8 @@
         out[f.key] = nums;
       } else if (f.type === 'num') {
         const n = Number(raw); if (raw === '' || !Number.isInteger(n)) throw new Error(`${f.label}: enter a whole number.`);
-        if (n < 0 || n > 99) throw new Error(`${f.label}: use 0–99.`);
+        const lo = f.lo ?? 0, hi = f.hi ?? 99;
+        if (n < lo || n > hi) throw new Error(`${f.label}: use ${lo}–${hi}.`);
         out[f.key] = n;
       } else if (f.type === 'text') {
         const t = raw.toUpperCase().replace(/[^A-Z]/g, '');
@@ -172,6 +184,33 @@
     return out;
   }
 
+  const vizSection = (legend) => `
+        <section class="card" aria-label="Visualization">
+          <div class="inputs" id="inputs"></div>
+          <div class="viz-info" id="vizInfo"></div>
+          <div class="viz" id="viz"></div>
+          <div class="aux" id="aux"></div>
+          <div class="legend">${legend}</div>
+          <div class="msg" id="msg" aria-live="polite"></div>
+          <div class="controls">
+            <button class="btn" id="bFirst" title="Restart (Home)">⏮</button>
+            <button class="btn" id="bPrev" title="Step back (←)">|◀</button>
+            <button class="btn primary" id="bPlay" title="Play / pause (Space)">▶ Play</button>
+            <button class="btn" id="bNext" title="Step forward (→)">▶|</button>
+            <button class="btn" id="bLast" title="Jump to end (End)">⏭</button>
+            <input class="scrub" id="scrub" type="range" min="0" value="0" aria-label="Step">
+            <label class="speed">Speed <input id="speed" type="range" min="1" max="6" value="3"><span id="speedLbl">1×</span></label>
+            <span class="count" id="count"></span>
+          </div>
+        </section>`;
+  const legendHTML = (list) => (list || []).map(l => { const [k, t] = Array.isArray(l) ? l : [l, LABEL[l]]; return `<span><i class="${k}"></i>${esc(t)}</span>`; }).join('');
+  function wireTabs() {
+    document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+      document.querySelectorAll('.panel').forEach(p => { p.hidden = p.dataset.panel !== t.dataset.tab; });
+    });
+  }
+
   /* ---------- algorithm page ---------- */
   function renderAlgo(algo) {
     const cat = catOf[algo.cat], i = ALGOS.indexOf(algo), prev = ALGOS[i - 1], next = ALGOS[i + 1];
@@ -179,8 +218,8 @@
     const legend = (algo.legend || []).map(l => { const [k, t] = Array.isArray(l) ? l : [l, LABEL[l]]; return `<span><i class="${k}"></i>${esc(t)}</span>`; }).join('');
     const probs = `<ul class="problems" id="problems">${algo.problems.map(([t, slug, d]) => {
       const key = `${algo.id}|${slug}`;
-      return `<li class="${solved.has(key) ? 'done' : ''}"><input type="checkbox" data-key="${key}" ${solved.has(key) ? 'checked' : ''} aria-label="Mark ${esc(t)} as solved"><a href="https://leetcode.com/problems/${slug}/" target="_blank" rel="noopener">${esc(t)}</a><span class="badge ${d}">${d}</span></li>`;
-    }).join('')}</ul><p class="note">Opens on LeetCode. Tick problems off as you solve them — saved in this browser.</p>`;
+      return `<li class="${solved.has(key) ? 'done' : ''}"><input type="checkbox" data-key="${key}" ${solved.has(key) ? 'checked' : ''} aria-label="Mark ${esc(t)} as solved"><a href="https://leetcode.com/problems/${slug}/" target="_blank" rel="noopener">${esc(t)}</a>${solBySlug[slug] ? `<a class="mini" href="#/p/${slug}">▶ Animate</a>` : ''}<span class="badge ${d}">${d}</span></li>`;
+    }).join('')}</ul><p class="note">Problems marked ▶ Animate have a step-by-step solution walkthrough here. Names open on LeetCode. Tick problems off as you solve them — saved in this browser.</p>`;
     const code = `<div class="code-lines" id="code">${algo.code.map((l, n) => `<div class="ln"><span class="no">${l === '' ? '' : n + 1}</span><span>${esc(l) || ' '}</span></div>`).join('')}</div><p class="note">The highlighted line is what the animation is doing right now.</p>`;
     const tabs = [];
     if (ex) {
@@ -202,24 +241,7 @@
         <p class="blurb">${esc(algo.blurb)}</p>
         <div class="chips"><span class="chip">Time <b>${esc(algo.time)}</b></span><span class="chip">${esc(cat.name)}</span></div>
 
-        <section class="card" aria-label="Visualization">
-          <div class="inputs" id="inputs"></div>
-          <div class="viz-info" id="vizInfo"></div>
-          <div class="viz" id="viz"></div>
-          <div class="aux" id="aux"></div>
-          <div class="legend">${legend}</div>
-          <div class="msg" id="msg" aria-live="polite"></div>
-          <div class="controls">
-            <button class="btn" id="bFirst" title="Restart (Home)">⏮</button>
-            <button class="btn" id="bPrev" title="Step back (←)">|◀</button>
-            <button class="btn primary" id="bPlay" title="Play / pause (Space)">▶ Play</button>
-            <button class="btn" id="bNext" title="Step forward (→)">▶|</button>
-            <button class="btn" id="bLast" title="Jump to end (End)">⏭</button>
-            <input class="scrub" id="scrub" type="range" min="0" value="0" aria-label="Step">
-            <label class="speed">Speed <input id="speed" type="range" min="1" max="6" value="3"><span id="speedLbl">1×</span></label>
-            <span class="count" id="count"></span>
-          </div>
-        </section>
+        ${vizSection(legend)}
 
         <section class="card tabs-card">
           <div class="tabs" role="tablist">${tabs.map((t, n) => `<button role="tab" class="tab${n === 0 ? ' on' : ''}" data-tab="${t.id}">${t.label}</button>`).join('')}</div>
@@ -229,10 +251,7 @@
         <nav class="pager">${prev ? `<a href="#/${prev.id}">← ${esc(prev.name)}</a>` : '<span></span>'}${next ? `<a href="#/${next.id}">${esc(next.name)} →</a>` : '<span></span>'}</nav>
       </article>`;
 
-    document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
-      document.querySelectorAll('.panel').forEach(p => { p.hidden = p.dataset.panel !== t.dataset.tab; });
-    });
+    wireTabs();
     $('#problems').addEventListener('change', (e) => {
       const cb = e.target.closest('input'); if (!cb) return;
       cb.checked ? solved.add(cb.dataset.key) : solved.delete(cb.dataset.key);
@@ -240,6 +259,32 @@
       store.set('algolab.solved', [...solved]); updateProgress();
     });
     player = createPlayer(algo);
+  }
+
+
+  /* ---------- problem walkthrough page ---------- */
+  function renderSolution(sol) {
+    const parent = byId[sol.algo];
+    const code = `<div class="code-lines" id="code">${sol.code.map((l, n) => `<div class="ln"><span class="no">${l === '' ? '' : n + 1}</span><span>${esc(l) || ' '}</span></div>`).join('')}</div><p class="note">The highlighted line is what the animation is doing right now.</p>`;
+    const tabs = [
+      { id: 'appr', label: '🧠 Approach', html: `<ol class="how">${sol.approach.map(h => `<li>${esc(h)}</li>`).join('')}</ol>` },
+      { id: 'code', label: '📜 Code', html: code },
+      { id: 'cx', label: '⏱ Speed', html: `<p><span class="chip">Time <b>${esc(sol.time)}</b></span> <span class="chip">Space <b>${esc(sol.space)}</b></span></p>` },
+      { id: 'more', label: '🔗 Learn more', html: `<p>Underlying technique: <a href="#/${parent.id}"><b>${esc(parent.name)}</b></a> — read the explanation and watch the general algorithm.</p><p><a class="btn primary" href="https://leetcode.com/problems/${sol.slug}/" target="_blank" rel="noopener">Try it on LeetCode ↗</a></p>` },
+    ];
+    $('#main').innerHTML = `
+      <article class="algo">
+        <div class="crumbs"><a href="#/">All</a> / Problem walkthroughs / <a href="#/${parent.id}">${esc(parent.name)}</a></div>
+        <h1>${esc(sol.title)} <span class="badge ${sol.diff}">${sol.diff}</span></h1>
+        <p class="blurb"><b>The task:</b> ${esc(sol.statement)}</p>
+        ${vizSection(legendHTML(sol.legend))}
+        <section class="card tabs-card">
+          <div class="tabs" role="tablist">${tabs.map((t, n) => `<button role="tab" class="tab${n === 0 ? ' on' : ''}" data-tab="${t.id}">${t.label}</button>`).join('')}</div>
+          ${tabs.map((t, n) => `<div class="panel" role="tabpanel" data-panel="${t.id}" ${n === 0 ? '' : 'hidden'}>${t.html}</div>`).join('')}
+        </section>
+      </article>`;
+    wireTabs();
+    player = createPlayer(sol);
   }
 
   /* ---------- player ---------- */

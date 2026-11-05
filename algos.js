@@ -636,5 +636,5 @@
     problems: [['N-Queens', 'n-queens', 'Hard'], ['N-Queens II', 'n-queens-ii', 'Hard'], ['Permutations', 'permutations', 'Medium'], ['Subsets', 'subsets', 'Medium'], ['Combination Sum', 'combination-sum', 'Medium'], ['Word Search', 'word-search', 'Medium'], ['Sudoku Solver', 'sudoku-solver', 'Hard']],
   });
 
-  window.ALGO_DATA = { CATS, ALGOS, GN, GE, ids, ek };
+  window.ALGO_DATA = { CATS, ALGOS, GN, GE, ids, ek, H: { A, G, rnd, randArr, uniq, pick } };
 })();

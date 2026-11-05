@@ -227,3 +227,11 @@ table.dp td.found { background: var(--c-found); color: #fff; }
 .panel .terms { margin-top: 14px; }
 .msg { font-size: 16px; }
 .blurb { margin-bottom: 10px; }
+
+/* walkthroughs */
+.mini { font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--accent); color: var(--accent-ink) !important; white-space: nowrap; }
+.mini:hover { text-decoration: none; filter: brightness(1.1); }
+.algo h1 .badge { font-size: 13px; vertical-align: middle; margin-left: 8px; }
+table.dp td.sorted { background: var(--c-sorted); color: #fff; } table.dp td.pivot { background: var(--c-pivot); color: #fff; }
+table.dp td.swap { background: var(--c-swap); color: #fff; } table.dp td.water { background: transparent; color: var(--muted); opacity: .45; }
+.legend i:not([class]), .legend i[class=""] { background: var(--bar); border: 1px solid var(--line); }
