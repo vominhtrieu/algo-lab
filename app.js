@@ -211,7 +211,7 @@
           <div class="msg" id="msg" aria-live="polite"></div>
           <div class="controls">
             <button class="btn" id="bFirst" title="Restart (Home)">⏮</button>
-            <button class="btn" id="bPrev" title="Step back (←)">◀</button>
+            <button class="btn" id="bPrev" title="Step back (←)">|◀</button>
             <button class="btn primary" id="bPlay" title="Play / pause (Space)">▶ Play</button>
             <button class="btn" id="bNext" title="Step forward (→)">▶|</button>
             <button class="btn" id="bLast" title="Jump to end (End)">⏭</button>
