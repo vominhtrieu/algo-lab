@@ -235,3 +235,5 @@ table.dp td.found { background: var(--c-found); color: #fff; }
 table.dp td.sorted { background: var(--c-sorted); color: #fff; } table.dp td.pivot { background: var(--c-pivot); color: #fff; }
 table.dp td.swap { background: var(--c-swap); color: #fff; } table.dp td.water { background: transparent; color: var(--muted); opacity: .45; }
 .legend i:not([class]), .legend i[class=""] { background: var(--bar); border: 1px solid var(--line); }
+
+.btn.lang { padding: 6px 10px; font-weight: 700; border-radius: 10px; height: 38px; }

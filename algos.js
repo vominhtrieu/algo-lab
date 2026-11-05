@@ -6,6 +6,7 @@
   const randArr = (n, lo = 5, hi = 60) => Array.from({ length: n }, () => rnd(lo, hi));
   const uniq = (n, lo, hi) => { const s = new Set(); while (s.size < n) s.add(rnd(lo, hi)); return [...s]; };
   const pick = (arr) => arr[rnd(0, arr.length - 1)];
+  const T = (en, vi) => (window.LANG === 'vi' ? vi : en);
 
   /* ---------- visual state builders ---------- */
   function A(arr, o = {}) {
@@ -46,21 +47,21 @@
     run({ arr }) {
       const a = arr.slice(), n = a.length, st = [], done = new Set();
       const P = (line, msg, cls = {}, ptrs = {}) => { const c = {}; done.forEach(i => c[i] = 'sorted'); Object.assign(c, cls); st.push({ line, msg, s: A(a, { cls: c, ptrs }) }); };
-      P(0, 'Start: bubble the largest value to the right on every pass.');
+      P(0, T('Start: bubble the largest value to the right on every pass.', `Bắt đầu: sau mỗi lượt, phần tử lớn nhất được "nổi" dần về bên phải.`));
       for (let i = 0; i < n - 1; i++) {
         let swapped = false;
         for (let j = 0; j < n - i - 1; j++) {
-          P(3, `Compare a[${j}]=${a[j]} and a[${j + 1}]=${a[j + 1]}.`, { [j]: 'compare', [j + 1]: 'compare' }, { j });
+          P(3, T(`Compare a[${j}]=${a[j]} and a[${j + 1}]=${a[j + 1]}.`, `So sánh a[${j}]=${a[j]} và a[${j + 1}]=${a[j + 1]}.`), { [j]: 'compare', [j + 1]: 'compare' }, { j });
           if (a[j] > a[j + 1]) {
             [a[j], a[j + 1]] = [a[j + 1], a[j]]; swapped = true;
-            P(4, `${a[j + 1]} > ${a[j]}, so swap them.`, { [j]: 'swap', [j + 1]: 'swap' }, { j });
+            P(4, T(`${a[j + 1]} > ${a[j]}, so swap them.`, `${a[j + 1]} > ${a[j]}, nên đổi chỗ hai số này.`), { [j]: 'swap', [j + 1]: 'swap' }, { j });
           }
         }
         done.add(n - i - 1);
-        P(2, `Pass ${i + 1} done — a[${n - i - 1}] = ${a[n - i - 1]} is in its final place.`);
-        if (!swapped) { for (let k = 0; k < n - i - 1; k++) done.add(k); P(5, 'No swaps in this pass, so the array is already sorted — stop early.'); return st; }
+        P(2, T(`Pass ${i + 1} done — a[${n - i - 1}] = ${a[n - i - 1]} is in its final place.`, `Xong lượt ${i + 1} — a[${n - i - 1}] = ${a[n - i - 1]} đã về đúng vị trí cuối cùng.`));
+        if (!swapped) { for (let k = 0; k < n - i - 1; k++) done.add(k); P(5, T('No swaps in this pass, so the array is already sorted — stop early.', `Lượt này không có lần đổi chỗ nào, nghĩa là mảng đã được sắp xếp — dừng sớm.`)); return st; }
       }
-      done.add(0); P(0, 'Sorted!'); return st;
+      done.add(0); P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
     problems: [['Sort Colors', 'sort-colors', 'Medium'], ['Merge Sorted Array', 'merge-sorted-array', 'Easy'], ['Squares of a Sorted Array', 'squares-of-a-sorted-array', 'Easy'], ['Sort an Array', 'sort-an-array', 'Medium']],
   });
@@ -76,17 +77,17 @@
       const P = (line, msg, cls = {}, ptrs = {}) => { const c = {}; done.forEach(i => c[i] = 'sorted'); Object.assign(c, cls); st.push({ line, msg, s: A(a, { cls: c, ptrs }) }); };
       for (let i = 0; i < n - 1; i++) {
         let min = i;
-        P(1, `Position ${i}: assume a[${i}]=${a[i]} is the smallest so far.`, { [i]: 'pivot' }, { i, min });
+        P(1, T(`Position ${i}: assume a[${i}]=${a[i]} is the smallest so far.`, `Vị trí ${i}: tạm coi a[${i}]=${a[i]} là phần tử nhỏ nhất.`), { [i]: 'pivot' }, { i, min });
         for (let j = i + 1; j < n; j++) {
           const better = a[j] < a[min];
-          P(3, `Is a[${j}]=${a[j]} < current minimum ${a[min]}? ${better ? 'Yes — new minimum.' : 'No.'}`, { [min]: 'pivot', [j]: 'compare' }, { i, min, j });
+          P(3, T(`Is a[${j}]=${a[j]} < current minimum ${a[min]}? ${better ? 'Yes — new minimum.' : 'No.'}`, `a[${j}]=${a[j]} có nhỏ hơn giá trị nhỏ nhất hiện tại ${a[min]} không? ${better ? 'Có — đây là giá trị nhỏ nhất mới.' : 'Không.'}`), { [min]: 'pivot', [j]: 'compare' }, { i, min, j });
           if (better) min = j;
         }
-        if (min !== i) { [a[i], a[min]] = [a[min], a[i]]; P(4, `Swap the minimum ${a[i]} into position ${i}.`, { [i]: 'swap', [min]: 'swap' }, { i }); }
-        else P(4, `a[${i}] is already the minimum — no swap needed.`, { [i]: 'pivot' }, { i });
+        if (min !== i) { [a[i], a[min]] = [a[min], a[i]]; P(4, T(`Swap the minimum ${a[i]} into position ${i}.`, `Đổi chỗ giá trị nhỏ nhất ${a[i]} vào vị trí ${i}.`), { [i]: 'swap', [min]: 'swap' }, { i }); }
+        else P(4, T(`a[${i}] is already the minimum — no swap needed.`, `a[${i}] đã là giá trị nhỏ nhất — không cần đổi chỗ.`), { [i]: 'pivot' }, { i });
         done.add(i);
       }
-      done.add(n - 1); P(0, 'Sorted!'); return st;
+      done.add(n - 1); P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
     problems: [['Kth Largest Element in an Array', 'kth-largest-element-in-an-array', 'Medium'], ['Relative Sort Array', 'relative-sort-array', 'Easy'], ['Height Checker', 'height-checker', 'Easy'], ['Sort Colors', 'sort-colors', 'Medium']],
   });
@@ -102,14 +103,14 @@
       const P = (line, msg, cls = {}, ptrs = {}) => { const c = {}; for (let k = 0; k < cur; k++) c[k] = 'sorted'; Object.assign(c, cls); st.push({ line, msg, s: A(a, { cls: c, ptrs }) }); };
       for (let i = 1; i < n; i++) {
         cur = i; let j = i;
-        P(0, `Take a[${i}]=${a[i]} and slide it left into the sorted prefix.`, { [i]: 'active' }, { i });
+        P(0, T(`Take a[${i}]=${a[i]} and slide it left into the sorted prefix.`, `Lấy a[${i}]=${a[i]} và trượt nó sang trái vào phần đã sắp xếp.`), { [i]: 'active' }, { i });
         while (j > 0) {
-          P(2, `Is a[${j - 1}]=${a[j - 1]} > a[${j}]=${a[j]}?`, { [j - 1]: 'compare', [j]: 'compare' }, { i });
-          if (a[j - 1] > a[j]) { [a[j - 1], a[j]] = [a[j], a[j - 1]]; P(3, 'Yes — swap to move it left.', { [j - 1]: 'swap', [j]: 'swap' }, { i }); j--; }
+          P(2, T(`Is a[${j - 1}]=${a[j - 1]} > a[${j}]=${a[j]}?`, `a[${j - 1}]=${a[j - 1]} có lớn hơn a[${j}]=${a[j]} không?`), { [j - 1]: 'compare', [j]: 'compare' }, { i });
+          if (a[j - 1] > a[j]) { [a[j - 1], a[j]] = [a[j], a[j - 1]]; P(3, T('Yes — swap to move it left.', `Có — đổi chỗ để đưa nó sang trái.`), { [j - 1]: 'swap', [j]: 'swap' }, { i }); j--; }
           else break;
         }
       }
-      cur = n; P(0, 'Sorted!'); return st;
+      cur = n; P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
     problems: [['Insertion Sort List', 'insertion-sort-list', 'Medium'], ['Sort List', 'sort-list', 'Medium'], ['Largest Number', 'largest-number', 'Medium'], ['Sort Colors', 'sort-colors', 'Medium']],
   });
@@ -131,23 +132,23 @@
           const takeL = Lh[i] <= Rh[j];
           a[k] = takeL ? Lh[i] : Rh[j];
           const c = base(); c[k] = 'swap';
-          P(10, `Compare ${Lh[i]} (left) and ${Rh[j]} (right) → write ${a[k]} to a[${k}].`, c, l, r, { k });
+          P(10, T(`Compare ${Lh[i]} (left) and ${Rh[j]} (right) → write ${a[k]} to a[${k}].`, `So sánh ${Lh[i]} (nửa trái) và ${Rh[j]} (nửa phải) → ghi ${a[k]} vào a[${k}].`), c, l, r, { k });
           takeL ? i++ : j++; k++;
         }
-        while (i < Lh.length) { a[k] = Lh[i++]; const c = base(); c[k] = 'swap'; P(11, `Right half is empty — copy ${a[k]} from the left half.`, c, l, r, { k }); k++; }
-        while (j < Rh.length) { a[k] = Rh[j++]; const c = base(); c[k] = 'swap'; P(11, `Left half is empty — copy ${a[k]} from the right half.`, c, l, r, { k }); k++; }
+        while (i < Lh.length) { a[k] = Lh[i++]; const c = base(); c[k] = 'swap'; P(11, T(`Right half is empty — copy ${a[k]} from the left half.`, `Nửa phải đã hết — chép ${a[k]} từ nửa trái.`), c, l, r, { k }); k++; }
+        while (j < Rh.length) { a[k] = Rh[j++]; const c = base(); c[k] = 'swap'; P(11, T(`Left half is empty — copy ${a[k]} from the right half.`, `Nửa trái đã hết — chép ${a[k]} từ nửa phải.`), c, l, r, { k }); k++; }
         const c = {}; for (let x = l; x <= r; x++) c[x] = 'sorted';
-        P(5, `Merged a[${l}..${r}] into a sorted run.`, c, l, r);
+        P(5, T(`Merged a[${l}..${r}] into a sorted run.`, `Đã trộn a[${l}..${r}] thành một đoạn đã sắp xếp.`), c, l, r);
       }
       function ms(l, r) {
         if (l >= r) return;
         const m = (l + r) >> 1; const c = {}; for (let x = l; x <= m; x++) c[x] = 'active'; for (let x = m + 1; x <= r; x++) c[x] = 'pivot';
-        P(2, `Split a[${l}..${r}] into [${l}..${m}] and [${m + 1}..${r}].`, c, l, r);
+        P(2, T(`Split a[${l}..${r}] into [${l}..${m}] and [${m + 1}..${r}].`, `Chia a[${l}..${r}] thành [${l}..${m}] và [${m + 1}..${r}].`), c, l, r);
         ms(l, m); ms(m + 1, r); merge(l, m, r);
       }
-      P(0, 'Start: recursively split, then merge.', {}, 0, n - 1);
+      P(0, T('Start: recursively split, then merge.', `Bắt đầu: chia nhỏ đệ quy rồi trộn lại.`), {}, 0, n - 1);
       ms(0, n - 1);
-      const c = {}; for (let x = 0; x < n; x++) c[x] = 'sorted'; st.push({ line: 0, msg: 'Sorted!', s: A(a, { cls: c }) });
+      const c = {}; for (let x = 0; x < n; x++) c[x] = 'sorted'; st.push({ line: 0, msg: T('Sorted!', `Đã sắp xếp xong!`), s: A(a, { cls: c }) });
       return st;
     },
     problems: [['Sort List', 'sort-list', 'Medium'], ['Merge Two Sorted Lists', 'merge-two-sorted-lists', 'Easy'], ['Merge k Sorted Lists', 'merge-k-sorted-lists', 'Hard'], ['Count of Smaller Numbers After Self', 'count-of-smaller-numbers-after-self', 'Hard'], ['Reverse Pairs', 'reverse-pairs', 'Hard']],
@@ -164,24 +165,24 @@
       const P = (line, msg, cls, ptrs, lo, hi) => { const c = {}; done.forEach(i => c[i] = 'sorted'); Object.assign(c, cls); st.push({ line, msg, s: A(a, { cls: c, ptrs, dim: [lo, hi] }) }); };
       function qs(lo, hi) {
         if (lo > hi) return;
-        if (lo === hi) { done.add(lo); P(1, `Single element a[${lo}] is already in place.`, {}, {}, lo, hi); return; }
+        if (lo === hi) { done.add(lo); P(1, T(`Single element a[${lo}] is already in place.`, `Phần tử đơn a[${lo}] đã đúng chỗ.`), {}, {}, lo, hi); return; }
         const p = a[hi]; let i = lo;
-        P(2, `Range [${lo}..${hi}]: pivot = a[${hi}] = ${p}.`, { [hi]: 'pivot' }, { i }, lo, hi);
+        P(2, T(`Range [${lo}..${hi}]: pivot = a[${hi}] = ${p}.`, `Đoạn [${lo}..${hi}]: chốt (pivot) = a[${hi}] = ${p}.`), { [hi]: 'pivot' }, { i }, lo, hi);
         for (let j = lo; j < hi; j++) {
-          P(4, `Is a[${j}]=${a[j]} < pivot ${p}?`, { [hi]: 'pivot', [j]: 'compare' }, { i, j }, lo, hi);
+          P(4, T(`Is a[${j}]=${a[j]} < pivot ${p}?`, `a[${j}]=${a[j]} có nhỏ hơn chốt ${p} không?`), { [hi]: 'pivot', [j]: 'compare' }, { i, j }, lo, hi);
           if (a[j] < p) {
-            if (i !== j) { [a[i], a[j]] = [a[j], a[i]]; P(5, `Yes — swap a[${i}] and a[${j}], grow the "smaller" zone.`, { [hi]: 'pivot', [i]: 'swap', [j]: 'swap' }, { i, j }, lo, hi); }
-            else P(5, `Yes — already at i, just grow the "smaller" zone.`, { [hi]: 'pivot', [i]: 'swap' }, { i, j }, lo, hi);
+            if (i !== j) { [a[i], a[j]] = [a[j], a[i]]; P(5, T(`Yes — swap a[${i}] and a[${j}], grow the "smaller" zone.`, `Có — đổi chỗ a[${i}] và a[${j}], mở rộng vùng "nhỏ hơn chốt".`), { [hi]: 'pivot', [i]: 'swap', [j]: 'swap' }, { i, j }, lo, hi); }
+            else P(5, T(`Yes — already at i, just grow the "smaller" zone.`, `Có — nó đã nằm đúng ở vị trí i, chỉ cần mở rộng vùng "nhỏ hơn chốt".`), { [hi]: 'pivot', [i]: 'swap' }, { i, j }, lo, hi);
             i++;
           }
         }
         [a[i], a[hi]] = [a[hi], a[i]]; done.add(i);
-        P(6, `Swap pivot ${p} into index ${i} — it is now in its final position.`, { [i]: 'pivot' }, {}, lo, hi);
+        P(6, T(`Swap pivot ${p} into index ${i} — it is now in its final position.`, `Đưa chốt ${p} vào vị trí ${i} — nó đã ở đúng vị trí cuối cùng.`), { [i]: 'pivot' }, {}, lo, hi);
         qs(lo, i - 1); qs(i + 1, hi);
       }
-      P(0, 'Start quick sort.', {}, {}, 0, n - 1);
+      P(0, T('Start quick sort.', `Bắt đầu quick sort.`), {}, {}, 0, n - 1);
       qs(0, n - 1);
-      for (let k = 0; k < n; k++) done.add(k); P(0, 'Sorted!', {}, {}, 0, n - 1);
+      for (let k = 0; k < n; k++) done.add(k); P(0, T('Sorted!', `Đã sắp xếp xong!`), {}, {}, 0, n - 1);
       return st;
     },
     problems: [['Kth Largest Element in an Array', 'kth-largest-element-in-an-array', 'Medium'], ['Sort Colors', 'sort-colors', 'Medium'], ['Top K Frequent Elements', 'top-k-frequent-elements', 'Medium'], ['K Closest Points to Origin', 'k-closest-points-to-origin', 'Medium']],
@@ -201,24 +202,24 @@
         while (true) {
           const l = 2 * i + 1, r = 2 * i + 2; let big = i; const cls = { [i]: 'pivot' };
           if (l < size) cls[l] = 'compare'; if (r < size) cls[r] = 'compare';
-          P(6, `Compare a[${i}]=${a[i]} with its ${l < size ? 'children' : 'children (none — it is a leaf)'}.`, cls, size);
+          P(6, T(`Compare a[${i}]=${a[i]} with its ${l < size ? 'children' : 'children (none — it is a leaf)'}.`, `So sánh a[${i}]=${a[i]} với ${l < size ? 'các nút con' : 'các nút con (không có — đây là nút lá)'}.`), cls, size);
           if (l < size && a[l] > a[big]) big = l; if (r < size && a[r] > a[big]) big = r;
-          if (big === i) { P(7, `${a[i]} is ≥ its children — heap property holds here.`, { [i]: 'active' }, size); return; }
+          if (big === i) { P(7, T(`${a[i]} is ≥ its children — heap property holds here.`, `${a[i]} ≥ các nút con — tính chất heap đã đúng tại đây.`), { [i]: 'active' }, size); return; }
           [a[i], a[big]] = [a[big], a[i]];
-          P(7, `Swap with the larger child (${a[i]}) and keep sifting down.`, { [i]: 'swap', [big]: 'swap' }, size);
+          P(7, T(`Swap with the larger child (${a[i]}) and keep sifting down.`, `Đổi chỗ với nút con lớn hơn (${a[i]}) và tiếp tục đẩy xuống.`), { [i]: 'swap', [big]: 'swap' }, size);
           i = big;
         }
       }
-      P(0, 'Phase 1: build a max-heap.');
+      P(0, T('Phase 1: build a max-heap.', `Giai đoạn 1: xây dựng max-heap.`));
       for (let i = (n >> 1) - 1; i >= 0; i--) sift(i, n);
-      P(1, 'Heap built — the largest value is at index 0.', { 0: 'active' });
+      P(1, T('Heap built — the largest value is at index 0.', `Đã xây xong heap — giá trị lớn nhất nằm ở chỉ số 0.`), { 0: 'active' });
       for (let end = n - 1; end >= 1; end--) {
         [a[0], a[end]] = [a[end], a[0]]; done.add(end);
-        P(2, `Move the max ${a[end]} to index ${end}; it is now sorted.`, { 0: 'swap', [end]: 'swap' }, end + 1);
-        P(3, 'Sift the new root down to restore the heap.', {}, end);
+        P(2, T(`Move the max ${a[end]} to index ${end}; it is now sorted.`, `Chuyển giá trị lớn nhất ${a[end]} về chỉ số ${end}; nó đã được sắp xếp.`), { 0: 'swap', [end]: 'swap' }, end + 1);
+        P(3, T('Sift the new root down to restore the heap.', `Đẩy gốc mới xuống để khôi phục heap.`), {}, end);
         sift(0, end);
       }
-      done.add(0); P(1, 'Sorted!');
+      done.add(0); P(1, T('Sorted!', `Đã sắp xếp xong!`));
       return st;
     },
     problems: [['Kth Largest Element in a Stream', 'kth-largest-element-in-a-stream', 'Easy'], ['Last Stone Weight', 'last-stone-weight', 'Easy'], ['Top K Frequent Elements', 'top-k-frequent-elements', 'Medium'], ['Find Median from Data Stream', 'find-median-from-data-stream', 'Hard']],
@@ -234,14 +235,14 @@
     fields: searchFields, legend: [['compare', 'Checking'], ['found', 'Found']],
     random() { const arr = uniq(9, 3, 60); return { arr, target: Math.random() < 0.8 ? pick(arr) : 61 + rnd(0, 20) }; },
     run({ arr, target }) {
-      const st = [], info = `target = ${target}`;
-      st.push({ line: 0, msg: `Looking for ${target}. Start at index 0.`, s: A(arr, { mode: 'cells', info }) });
+      const st = [], info = T(`target = ${target}`, `cần tìm = ${target}`);
+      st.push({ line: 0, msg: T(`Looking for ${target}. Start at index 0.`, `Tìm ${target}. Bắt đầu từ chỉ số 0.`), s: A(arr, { mode: 'cells', info }) });
       for (let i = 0; i < arr.length; i++) {
         const hit = arr[i] === target;
-        st.push({ line: 1, msg: `a[${i}] = ${arr[i]} ${hit ? '==' : '≠'} ${target}${hit ? '' : ' — keep going.'}`, s: A(arr, { mode: 'cells', info, cls: { [i]: 'compare' }, ptrs: { i } }) });
-        if (hit) { st.push({ line: 2, msg: `Found ${target} at index ${i}!`, s: A(arr, { mode: 'cells', info, cls: { [i]: 'found' }, ptrs: { i } }) }); return st; }
+        st.push({ line: 1, msg: T(`a[${i}] = ${arr[i]} ${hit ? '==' : '≠'} ${target}${hit ? '' : ' — keep going.'}`, `a[${i}] = ${arr[i]} ${hit ? '==' : '≠'} ${target}${hit ? '' : ' — tiếp tục.'}`), s: A(arr, { mode: 'cells', info, cls: { [i]: 'compare' }, ptrs: { i } }) });
+        if (hit) { st.push({ line: 2, msg: T(`Found ${target} at index ${i}!`, `Tìm thấy ${target} tại chỉ số ${i}!`), s: A(arr, { mode: 'cells', info, cls: { [i]: 'found' }, ptrs: { i } }) }); return st; }
       }
-      st.push({ line: 3, msg: `Reached the end — ${target} is not in the array (return -1).`, s: A(arr, { mode: 'cells', info }) });
+      st.push({ line: 3, msg: T(`Reached the end — ${target} is not in the array (return -1).`, `Đã đến cuối — ${target} không có trong mảng (trả về -1).`), s: A(arr, { mode: 'cells', info }) });
       return st;
     },
     problems: [['Two Sum', 'two-sum', 'Easy'], ['Contains Duplicate', 'contains-duplicate', 'Easy'], ['Missing Number', 'missing-number', 'Easy'], ['Richest Customer Wealth', 'richest-customer-wealth', 'Easy']],
@@ -256,17 +257,17 @@
     random() { const arr = uniq(12, 3, 95).sort((x, y) => x - y); return { arr, target: Math.random() < 0.85 ? pick(arr) : 96 + rnd(0, 3) }; },
     normalize: (inp) => ({ ...inp, arr: inp.arr.slice().sort((x, y) => x - y) }),
     run({ arr, target }) {
-      const a = arr, st = [], info = `target = ${target}`; let lo = 0, hi = a.length - 1;
+      const a = arr, st = [], info = T(`target = ${target}`, `cần tìm = ${target}`); let lo = 0, hi = a.length - 1;
       const P = (line, msg, cls = {}, ptrs = {}) => st.push({ line, msg, s: A(a, { mode: 'cells', info, cls, ptrs, dim: lo <= hi ? [lo, hi] : [1, 0] }) });
-      P(0, `Search for ${target} in the sorted array. Window = whole array.`, {}, { lo, hi });
+      P(0, T(`Search for ${target} in the sorted array. Window = whole array.`, `Tìm ${target} trong mảng đã sắp xếp. Cửa sổ = toàn bộ mảng.`), {}, { lo, hi });
       while (lo <= hi) {
         const mid = (lo + hi) >> 1;
-        P(2, `mid = floor((${lo} + ${hi}) / 2) = ${mid}, a[${mid}] = ${a[mid]}.`, { [mid]: 'compare' }, { lo, mid, hi });
-        if (a[mid] === target) { P(3, `a[${mid}] == ${target} — found at index ${mid}!`, { [mid]: 'found' }, { lo, mid, hi }); return st; }
-        if (a[mid] < target) { P(4, `${a[mid]} < ${target}: target must be on the right → lo = ${mid + 1}.`, { [mid]: 'compare' }, { lo, mid, hi }); lo = mid + 1; }
-        else { P(5, `${a[mid]} > ${target}: target must be on the left → hi = ${mid - 1}.`, { [mid]: 'compare' }, { lo, mid, hi }); hi = mid - 1; }
+        P(2, T(`mid = floor((${lo} + ${hi}) / 2) = ${mid}, a[${mid}] = ${a[mid]}.`, `mid = floor((${lo} + ${hi}) / 2) = ${mid}, a[${mid}] = ${a[mid]}.`), { [mid]: 'compare' }, { lo, mid, hi });
+        if (a[mid] === target) { P(3, T(`a[${mid}] == ${target} — found at index ${mid}!`, `a[${mid}] == ${target} — tìm thấy tại chỉ số ${mid}!`), { [mid]: 'found' }, { lo, mid, hi }); return st; }
+        if (a[mid] < target) { P(4, T(`${a[mid]} < ${target}: target must be on the right → lo = ${mid + 1}.`, `${a[mid]} < ${target}: giá trị cần tìm nằm bên phải → lo = ${mid + 1}.`), { [mid]: 'compare' }, { lo, mid, hi }); lo = mid + 1; }
+        else { P(5, T(`${a[mid]} > ${target}: target must be on the left → hi = ${mid - 1}.`, `${a[mid]} > ${target}: giá trị cần tìm nằm bên trái → hi = ${mid - 1}.`), { [mid]: 'compare' }, { lo, mid, hi }); hi = mid - 1; }
       }
-      P(6, `lo passed hi — the window is empty, so ${target} is not in the array.`);
+      P(6, T(`lo passed hi — the window is empty, so ${target} is not in the array.`, `lo vượt qua hi — cửa sổ rỗng, nên ${target} không có trong mảng.`));
       return st;
     },
     problems: [['Binary Search', 'binary-search', 'Easy'], ['Search Insert Position', 'search-insert-position', 'Easy'], ['First Bad Version', 'first-bad-version', 'Easy'], ['Search in Rotated Sorted Array', 'search-in-rotated-sorted-array', 'Medium'], ['Find Minimum in Rotated Sorted Array', 'find-minimum-in-rotated-sorted-array', 'Medium'], ['Koko Eating Bananas', 'koko-eating-bananas', 'Medium'], ['Median of Two Sorted Arrays', 'median-of-two-sorted-arrays', 'Hard']],
@@ -286,17 +287,17 @@
     },
     normalize: (inp) => ({ ...inp, arr: inp.arr.slice().sort((x, y) => x - y) }),
     run({ arr, target }) {
-      const a = arr, st = [], info = `target sum = ${target}`; let lo = 0, hi = a.length - 1;
+      const a = arr, st = [], info = T(`target sum = ${target}`, `tổng cần tìm = ${target}`); let lo = 0, hi = a.length - 1;
       const P = (line, msg, cls = {}, ptrs = {}) => st.push({ line, msg, s: A(a, { mode: 'cells', info, cls, ptrs, dim: lo < hi ? [lo, hi] : [1, 0] }) });
-      P(0, 'Place one pointer at each end of the sorted array.', {}, { lo, hi });
+      P(0, T('Place one pointer at each end of the sorted array.', `Đặt một con trỏ ở mỗi đầu của mảng đã sắp xếp.`), {}, { lo, hi });
       while (lo < hi) {
         const sum = a[lo] + a[hi];
-        P(2, `a[${lo}] + a[${hi}] = ${a[lo]} + ${a[hi]} = ${sum}.`, { [lo]: 'compare', [hi]: 'compare' }, { lo, hi });
-        if (sum === target) { P(3, `${sum} equals the target — pair found at indices ${lo} and ${hi}!`, { [lo]: 'found', [hi]: 'found' }, { lo, hi }); return st; }
-        if (sum < target) { P(4, `${sum} < ${target}: too small — move lo right to a bigger number.`, { [lo]: 'compare', [hi]: 'compare' }, { lo, hi }); lo++; }
-        else { P(5, `${sum} > ${target}: too big — move hi left to a smaller number.`, { [lo]: 'compare', [hi]: 'compare' }, { lo, hi }); hi--; }
+        P(2, T(`a[${lo}] + a[${hi}] = ${a[lo]} + ${a[hi]} = ${sum}.`, `a[${lo}] + a[${hi}] = ${a[lo]} + ${a[hi]} = ${sum}.`), { [lo]: 'compare', [hi]: 'compare' }, { lo, hi });
+        if (sum === target) { P(3, T(`${sum} equals the target — pair found at indices ${lo} and ${hi}!`, `${sum} bằng mục tiêu — tìm được cặp tại chỉ số ${lo} và ${hi}!`), { [lo]: 'found', [hi]: 'found' }, { lo, hi }); return st; }
+        if (sum < target) { P(4, T(`${sum} < ${target}: too small — move lo right to a bigger number.`, `${sum} < ${target}: quá nhỏ — dịch lo sang phải để lấy số lớn hơn.`), { [lo]: 'compare', [hi]: 'compare' }, { lo, hi }); lo++; }
+        else { P(5, T(`${sum} > ${target}: too big — move hi left to a smaller number.`, `${sum} > ${target}: quá lớn — dịch hi sang trái để lấy số nhỏ hơn.`), { [lo]: 'compare', [hi]: 'compare' }, { lo, hi }); hi--; }
       }
-      P(6, 'The pointers met — no pair adds up to the target.');
+      P(6, T('The pointers met — no pair adds up to the target.', `Hai con trỏ gặp nhau — không có cặp nào có tổng bằng mục tiêu.`));
       return st;
     },
     problems: [['Two Sum II – Input Array Is Sorted', 'two-sum-ii-input-array-is-sorted', 'Medium'], ['Valid Palindrome', 'valid-palindrome', 'Easy'], ['3Sum', '3sum', 'Medium'], ['Container With Most Water', 'container-with-most-water', 'Medium'], ['Trapping Rain Water', 'trapping-rain-water', 'Hard']],
@@ -317,16 +318,16 @@
       const P = (line, msg, l, final) => {
         const cls = {}; for (let x = bl; x < bl + k; x++) cls[x] = final ? 'found' : 'sorted';
         if (!final) for (let x = l; x < l + k; x++) cls[x] = 'active';
-        st.push({ line, msg, s: A(a, { mode: 'cells', cls, win: final ? null : [l, l + k - 1], info: `window sum = ${sum} · best = ${best}  (k = ${k})` }) });
+        st.push({ line, msg, s: A(a, { mode: 'cells', cls, win: final ? null : [l, l + k - 1], info: T(`window sum = ${sum} · best = ${best}  (k = ${k})`, `tổng cửa sổ = ${sum} · tốt nhất = ${best}  (k = ${k})`) }) });
       };
-      P(0, `First window a[0..${k - 1}] sums to ${sum}. That is the best so far.`, 0);
+      P(0, T(`First window a[0..${k - 1}] sums to ${sum}. That is the best so far.`, `Cửa sổ đầu tiên a[0..${k - 1}] có tổng ${sum}. Đây là kết quả tốt nhất cho đến lúc này.`), 0);
       for (let r = k; r < n; r++) {
         const l = r - k + 1; sum += a[r] - a[r - k];
-        P(2, `Slide right: add a[${r}]=${a[r]}, drop a[${r - k}]=${a[r - k]} → sum = ${sum}.`, l);
-        if (sum > best) { best = sum; bl = l; P(3, `${sum} beats the old best — remember this window.`, l); }
-        else P(3, `${sum} does not beat ${best}.`, l);
+        P(2, T(`Slide right: add a[${r}]=${a[r]}, drop a[${r - k}]=${a[r - k]} → sum = ${sum}.`, `Trượt sang phải: thêm a[${r}]=${a[r]}, bỏ a[${r - k}]=${a[r - k]} → tổng = ${sum}.`), l);
+        if (sum > best) { best = sum; bl = l; P(3, T(`${sum} beats the old best — remember this window.`, `${sum} lớn hơn kết quả cũ — ghi nhớ cửa sổ này.`), l); }
+        else P(3, T(`${sum} does not beat ${best}.`, `${sum} không vượt qua ${best}.`), l);
       }
-      P(4, `Maximum sum of ${k} consecutive elements = ${best}.`, bl, true);
+      P(4, T(`Maximum sum of ${k} consecutive elements = ${best}.`, `Tổng lớn nhất của ${k} phần tử liên tiếp = ${best}.`), bl, true);
       return st;
     },
     problems: [['Maximum Average Subarray I', 'maximum-average-subarray-i', 'Easy'], ['Longest Substring Without Repeating Characters', 'longest-substring-without-repeating-characters', 'Medium'], ['Minimum Size Subarray Sum', 'minimum-size-subarray-sum', 'Medium'], ['Permutation in String', 'permutation-in-string', 'Medium'], ['Sliding Window Maximum', 'sliding-window-maximum', 'Hard']],
@@ -353,26 +354,26 @@
     legend: [['current', 'Being processed'], ['frontier', 'In the queue'], ['done', 'Finished'], ['tree', 'Discovery edge']],
     run({ start }) {
       const st = [], nodeCls = {}, edgeCls = {}, sub = {}, lvl = {}; const queue = [start];
-      const P = (line, msg) => st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, 'Queue (front → back)', queue) });
+      const P = (line, msg) => st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, T('Queue (front → back)', 'Hàng đợi (đầu → cuối)'), queue) });
       nodeCls[start] = 'frontier'; lvl[start] = 0; sub[start] = 'L0';
-      P(0, `Start at ${start}: enqueue it and mark visited. Labels show the BFS level (distance in edges).`);
+      P(0, T(`Start at ${start}: enqueue it and mark visited. Labels show the BFS level (distance in edges).`, `Bắt đầu tại ${start}: cho vào hàng đợi và đánh dấu đã thăm. Nhãn hiển thị mức BFS (khoảng cách tính theo số cạnh).`));
       while (queue.length) {
         const u = queue.shift(); nodeCls[u] = 'current';
-        P(2, `Dequeue ${u} and look at its neighbours.`);
+        P(2, T(`Dequeue ${u} and look at its neighbours.`, `Lấy ${u} ra khỏi hàng đợi và xét các nút kề của nó.`));
         for (const [v] of adj[u]) {
           const key = ek(u, v);
           if (!(v in lvl)) {
-            edgeCls[key] = 'look'; P(4, `Neighbour ${v} is unvisited.`);
+            edgeCls[key] = 'look'; P(4, T(`Neighbour ${v} is unvisited.`, `Nút kề ${v} chưa được thăm.`));
             lvl[v] = lvl[u] + 1; sub[v] = 'L' + lvl[v]; nodeCls[v] = 'frontier'; edgeCls[key] = 'tree'; queue.push(v);
-            P(5, `Mark ${v} visited (level ${lvl[v]}) and enqueue it.`);
+            P(5, T(`Mark ${v} visited (level ${lvl[v]}) and enqueue it.`, `Đánh dấu ${v} đã thăm (mức ${lvl[v]}) và cho vào hàng đợi.`));
           } else {
-            const old = edgeCls[key]; edgeCls[key] = 'look'; P(4, `Neighbour ${v} was already visited — skip.`);
+            const old = edgeCls[key]; edgeCls[key] = 'look'; P(4, T(`Neighbour ${v} was already visited — skip.`, `Nút kề ${v} đã được thăm rồi — bỏ qua.`));
             if (old) edgeCls[key] = old; else delete edgeCls[key];
           }
         }
-        nodeCls[u] = 'done'; P(1, `${u} is fully explored.`);
+        nodeCls[u] = 'done'; P(1, T(`${u} is fully explored.`, `${u} đã được duyệt xong.`));
       }
-      P(1, 'Queue is empty — every reachable node has been visited.');
+      P(1, T('Queue is empty — every reachable node has been visited.', `Hàng đợi rỗng — mọi nút có thể đến được đều đã được thăm.`));
       return st;
     },
     problems: [['Binary Tree Level Order Traversal', 'binary-tree-level-order-traversal', 'Medium'], ['Number of Islands', 'number-of-islands', 'Medium'], ['Rotting Oranges', 'rotting-oranges', 'Medium'], ['01 Matrix', '01-matrix', 'Medium'], ['Shortest Path in Binary Matrix', 'shortest-path-in-binary-matrix', 'Medium'], ['Word Ladder', 'word-ladder', 'Hard']],
@@ -387,24 +388,24 @@
     legend: [['current', 'Current node'], ['frontier', 'On the call stack'], ['done', 'Finished'], ['tree', 'Tree edge']],
     run({ start }) {
       const st = [], nodeCls = {}, edgeCls = {}, sub = {}, path = []; let order = 0;
-      const P = (line, msg) => st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, 'Recursion stack (bottom → top)', path) });
+      const P = (line, msg) => st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, T('Recursion stack (bottom → top)', 'Ngăn xếp đệ quy (đáy → đỉnh)'), path) });
       function dfs(u, parent) {
         if (parent) nodeCls[parent] = 'frontier';
         path.push(u); nodeCls[u] = 'current'; sub[u] = '#' + (++order);
-        P(1, `Visit ${u} (visit #${order}) and push it on the call stack.`);
+        P(1, T(`Visit ${u} (visit #${order}) and push it on the call stack.`, `Thăm ${u} (lần thăm #${order}) và đẩy nó vào ngăn xếp lời gọi.`));
         for (const [v] of adj[u]) {
           const key = ek(u, v);
           if (!(v in sub)) {
-            edgeCls[key] = 'look'; P(3, `Neighbour ${v} is unvisited → go deeper.`);
+            edgeCls[key] = 'look'; P(3, T(`Neighbour ${v} is unvisited → go deeper.`, `Nút kề ${v} chưa được thăm → đi sâu hơn.`));
             edgeCls[key] = 'tree'; dfs(v, u);
-            P(2, `Back at ${u} — check its next neighbour.`);
+            P(2, T(`Back at ${u} — check its next neighbour.`, `Quay lại ${u} — xét nút kề tiếp theo.`));
           } else {
-            const old = edgeCls[key]; edgeCls[key] = 'look'; P(3, `Neighbour ${v} was already visited — skip.`);
+            const old = edgeCls[key]; edgeCls[key] = 'look'; P(3, T(`Neighbour ${v} was already visited — skip.`, `Nút kề ${v} đã được thăm rồi — bỏ qua.`));
             if (old) edgeCls[key] = old; else delete edgeCls[key];
           }
         }
         path.pop(); nodeCls[u] = 'done'; if (parent) nodeCls[parent] = 'current';
-        P(0, `${u} has no more unvisited neighbours — return (backtrack).`);
+        P(0, T(`${u} has no more unvisited neighbours — return (backtrack).`, `${u} không còn nút kề nào chưa thăm — quay lui (return).`));
       }
       dfs(start, null);
       return st;
@@ -429,22 +430,22 @@
         Object.values(prevEdge).forEach(k => edgeCls[k] = 'tree');
         if (look) edgeCls[look] = 'look';
         const items = pq.slice().sort((x, y) => x[0] - y[0] || (x[1] < y[1] ? -1 : 1)).map(([d, v]) => `${v}:${d}`);
-        st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, 'Priority queue  node:distance (smallest first)', items, true) });
+        st.push({ line, msg, s: gs(nodeCls, edgeCls, sub, T('Priority queue  node:distance (smallest first)', 'Hàng đợi ưu tiên  nút:khoảng cách (nhỏ nhất trước)'), items, true) });
       };
-      P(0, `Distances start at ∞, except ${start} = 0. Numbers on nodes are the current best distance.`);
+      P(0, T(`Distances start at ∞, except ${start} = 0. Numbers on nodes are the current best distance.`, `Khoảng cách ban đầu là ∞, riêng ${start} = 0. Số trên mỗi nút là khoảng cách tốt nhất hiện tại.`));
       while (pq.length) {
         pq.sort((x, y) => x[0] - y[0] || (x[1] < y[1] ? -1 : 1));
         const [d, u] = pq.shift();
-        if (fin.has(u)) { P(3, `Popped stale entry for ${u} — already finalized, skip.`); continue; }
-        fin.add(u); P(4, `Pop ${u} (distance ${d}) — the smallest unfinished node. Its distance is now final.`, u);
+        if (fin.has(u)) { P(3, T(`Popped stale entry for ${u} — already finalized, skip.`, `Lấy ra mục cũ của ${u} — đã chốt rồi, bỏ qua.`)); continue; }
+        fin.add(u); P(4, T(`Pop ${u} (distance ${d}) — the smallest unfinished node. Its distance is now final.`, `Lấy ${u} ra (khoảng cách ${d}) — nút chưa chốt có khoảng cách nhỏ nhất. Khoảng cách của nó được chốt.`), u);
         for (const [v, w] of adj[u]) {
           if (fin.has(v)) continue;
           const nd = d + w, key = ek(u, v);
-          P(6, `Edge ${u}–${v} (weight ${w}): ${d} + ${w} = ${nd} vs current dist[${v}] = ${dist[v] === Infinity ? '∞' : dist[v]}.`, u, key);
-          if (nd < dist[v]) { dist[v] = nd; prevEdge[v] = key; pq.push([nd, v]); P(7, `Shorter path found! dist[${v}] = ${nd} (via ${u}).`, u, key); }
+          P(6, T(`Edge ${u}–${v} (weight ${w}): ${d} + ${w} = ${nd} vs current dist[${v}] = ${dist[v] === Infinity ? '∞' : dist[v]}.`, `Cạnh ${u}–${v} (trọng số ${w}): ${d} + ${w} = ${nd} so với dist[${v}] hiện tại = ${dist[v] === Infinity ? '∞' : dist[v]}.`), u, key);
+          if (nd < dist[v]) { dist[v] = nd; prevEdge[v] = key; pq.push([nd, v]); P(7, T(`Shorter path found! dist[${v}] = ${nd} (via ${u}).`, `Tìm được đường ngắn hơn! dist[${v}] = ${nd} (qua ${u}).`), u, key); }
         }
       }
-      P(1, 'Done. Green edges show the shortest path from the start to every node.');
+      P(1, T('Done. Green edges show the shortest path from the start to every node.', `Xong. Các cạnh xanh là đường đi ngắn nhất từ nút bắt đầu đến mọi nút.`));
       return st;
     },
     problems: [['Network Delay Time', 'network-delay-time', 'Medium'], ['Path With Minimum Effort', 'path-with-minimum-effort', 'Medium'], ['Cheapest Flights Within K Stops', 'cheapest-flights-within-k-stops', 'Medium'], ['Path with Maximum Probability', 'path-with-maximum-probability', 'Medium'], ['Swim in Rising Water', 'swim-in-rising-water', 'Hard']],
@@ -463,17 +464,17 @@
       const m = a.length, n = b.length, st = [];
       const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(null));
       for (let j = 0; j <= n; j++) dp[0][j] = 0; for (let i = 0; i <= m; i++) dp[i][0] = 0;
-      const rows = ['∅', ...a], cols = ['∅', ...b], info = `A = "${a}"   B = "${b}"`;
+      const rows = ['∅', ...a], cols = ['∅', ...b], info = T(`A = "${a}"   B = "${b}"`, `Chuỗi A = "${a}"   Chuỗi B = "${b}"`);
       const P = (line, msg, cls = {}) => st.push({ line, msg, s: G(rows, cols, dp, cls, info) });
-      P(0, 'An empty string shares nothing with any string, so row 0 and column 0 are 0.');
+      P(0, T('An empty string shares nothing with any string, so row 0 and column 0 are 0.', `Chuỗi rỗng không có gì chung với chuỗi nào, nên hàng 0 và cột 0 đều bằng 0.`));
       for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) {
         const cell = `${i},${j}`;
         if (a[i - 1] === b[j - 1]) {
           dp[i][j] = dp[i - 1][j - 1] + 1;
-          P(2, `'${a[i - 1]}' == '${b[j - 1]}' → diagonal + 1 = ${dp[i][j]}.`, { [cell]: 'active', [`${i - 1},${j - 1}`]: 'compare' });
+          P(2, T(`'${a[i - 1]}' == '${b[j - 1]}' → diagonal + 1 = ${dp[i][j]}.`, `'${a[i - 1]}' == '${b[j - 1]}' → đường chéo + 1 = ${dp[i][j]}.`), { [cell]: 'active', [`${i - 1},${j - 1}`]: 'compare' });
         } else {
           dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-          P(4, `'${a[i - 1]}' ≠ '${b[j - 1]}' → max(up ${dp[i - 1][j]}, left ${dp[i][j - 1]}) = ${dp[i][j]}.`, { [cell]: 'active', [`${i - 1},${j}`]: 'compare', [`${i},${j - 1}`]: 'compare' });
+          P(4, T(`'${a[i - 1]}' ≠ '${b[j - 1]}' → max(up ${dp[i - 1][j]}, left ${dp[i][j - 1]}) = ${dp[i][j]}.`, `'${a[i - 1]}' ≠ '${b[j - 1]}' → max(ô trên ${dp[i - 1][j]}, ô trái ${dp[i][j - 1]}) = ${dp[i][j]}.`), { [cell]: 'active', [`${i - 1},${j}`]: 'compare', [`${i},${j - 1}`]: 'compare' });
         }
       }
       let i = m, j = n, res = ''; const path = {};
@@ -481,7 +482,7 @@
         path[`${i},${j}`] = 'found';
         if (a[i - 1] === b[j - 1]) { res = a[i - 1] + res; i--; j--; } else if (dp[i - 1][j] >= dp[i][j - 1]) i--; else j--;
       }
-      P(5, `LCS length = ${dp[m][n]}. Tracing back gives "${res}".`, path);
+      P(5, T(`LCS length = ${dp[m][n]}. Tracing back gives "${res}".`, `Độ dài LCS = ${dp[m][n]}. Truy ngược cho ra "${res}".`), path);
       return st;
     },
     problems: [['Longest Common Subsequence', 'longest-common-subsequence', 'Medium'], ['Edit Distance', 'edit-distance', 'Medium'], ['Delete Operation for Two Strings', 'delete-operation-for-two-strings', 'Medium'], ['Longest Palindromic Subsequence', 'longest-palindromic-subsequence', 'Medium'], ['Shortest Common Supersequence', 'shortest-common-supersequence', 'Hard'], ['Distinct Subsequences', 'distinct-subsequences', 'Hard']],
@@ -500,22 +501,22 @@
     run({ w, v, cap }) {
       const n = w.length, st = [], dp = Array.from({ length: n + 1 }, () => Array(cap + 1).fill(null));
       for (let c = 0; c <= cap; c++) dp[0][c] = 0;
-      const rows = ['no items', ...w.map((x, i) => `item ${i + 1} (w=${x}, v=${v[i]})`)], cols = Array.from({ length: cap + 1 }, (_, c) => c);
-      const info = `capacity W = ${cap}  ·  columns are capacities 0…${cap}`;
+      const rows = [T('no items', 'chưa có món'), ...w.map((x, i) => T(`item ${i + 1} (w=${x}, v=${v[i]})`, `món ${i + 1} (w=${x}, v=${v[i]})`))], cols = Array.from({ length: cap + 1 }, (_, c) => c);
+      const info = T(`capacity W = ${cap}  ·  columns are capacities 0…${cap}`, `sức chứa W = ${cap}  ·  các cột là sức chứa 0…${cap}`);
       const P = (line, msg, cls = {}) => st.push({ line, msg, s: G(rows, cols, dp, cls, info) });
-      P(0, 'With no items the best value is 0 for every capacity.');
+      P(0, T('With no items the best value is 0 for every capacity.', `Không có đồ vật nào thì giá trị tốt nhất là 0 với mọi sức chứa.`));
       for (let i = 1; i <= n; i++) for (let c = 0; c <= cap; c++) {
         const wi = w[i - 1], vi = v[i - 1], skip = dp[i - 1][c]; dp[i][c] = skip;
         const cls = { [`${i},${c}`]: 'active', [`${i - 1},${c}`]: 'compare' };
         if (wi <= c) {
           const take = dp[i - 1][c - wi] + vi; cls[`${i - 1},${c - wi}`] = 'compare'; dp[i][c] = Math.max(skip, take);
-          P(3, `Item ${i} (w=${wi}, v=${vi}) at capacity ${c}: skip = ${skip}, take = ${dp[i - 1][c - wi]} + ${vi} = ${take} → ${dp[i][c]}.`, cls);
-        } else P(1, `Item ${i} (w=${wi}) is heavier than capacity ${c} → must skip: ${skip}.`, cls);
+          P(3, T(`Item ${i} (w=${wi}, v=${vi}) at capacity ${c}: skip = ${skip}, take = ${dp[i - 1][c - wi]} + ${vi} = ${take} → ${dp[i][c]}.`, `Món ${i} (w=${wi}, v=${vi}) với sức chứa ${c}: bỏ = ${skip}, lấy = ${dp[i - 1][c - wi]} + ${vi} = ${take} → ${dp[i][c]}.`), cls);
+        } else P(1, T(`Item ${i} (w=${wi}) is heavier than capacity ${c} → must skip: ${skip}.`, `Món ${i} (w=${wi}) nặng hơn sức chứa ${c} → bắt buộc bỏ: ${skip}.`), cls);
       }
       let c = cap; const path = {}, chosen = [];
       for (let i = n; i > 0; i--) { path[`${i},${c}`] = 'found'; if (dp[i][c] !== dp[i - 1][c]) { chosen.push(i); c -= w[i - 1]; } }
       path[`0,${c}`] = 'found';
-      P(4, `Best value = ${dp[n][cap]}. ${chosen.length ? 'Items taken: ' + chosen.reverse().join(', ') + '.' : 'No item fits.'}`, path);
+      P(4, T(`Best value = ${dp[n][cap]}. ${chosen.length ? 'Items taken: ' + chosen.reverse().join(', ') + '.' : 'No item fits.'}`, `Giá trị tốt nhất = ${dp[n][cap]}. ${chosen.length ? 'Các món được lấy: ' + chosen.reverse().join(', ') + '.' : 'Không có món nào vừa.'}`), path);
       return st;
     },
     problems: [['Partition Equal Subset Sum', 'partition-equal-subset-sum', 'Medium'], ['Target Sum', 'target-sum', 'Medium'], ['Last Stone Weight II', 'last-stone-weight-ii', 'Medium'], ['Ones and Zeroes', 'ones-and-zeroes', 'Medium']],
@@ -531,20 +532,20 @@
     random() { return { coins: pick([[1, 3, 4], [1, 5, 6], [2, 3, 7], [1, 2, 5], [2, 5]]), amount: rnd(7, 12) }; },
     run({ coins, amount }) {
       const cs = [...new Set(coins)].sort((x, y) => x - y), dp = Array(amount + 1).fill(Infinity); dp[0] = 0;
-      const st = [], cols = Array.from({ length: amount + 1 }, (_, i) => i), info = `coins = [${cs.join(', ')}]   amount = ${amount}`;
-      const P = (line, msg, cls = {}) => st.push({ line, msg, s: G(['min coins'], cols, [dp], cls, info) });
-      P(0, 'Making amount 0 takes 0 coins; every other amount starts as ∞ (unknown).');
+      const st = [], cols = Array.from({ length: amount + 1 }, (_, i) => i), info = T(`coins = [${cs.join(', ')}]   amount = ${amount}`, `đồng xu = [${cs.join(', ')}]   số tiền = ${amount}`);
+      const P = (line, msg, cls = {}) => st.push({ line, msg, s: G([T('min coins', 'số xu tối thiểu')], cols, [dp], cls, info) });
+      P(0, T('Making amount 0 takes 0 coins; every other amount starts as ∞ (unknown).', `Tạo số tiền 0 cần 0 đồng xu; mọi số tiền khác bắt đầu là ∞ (chưa biết).`));
       for (let a = 1; a <= amount; a++) for (const c of cs) {
         if (c > a) continue;
         const cand = dp[a - c] + 1, cls = { [`0,${a}`]: 'active', [`0,${a - c}`]: 'compare' };
-        if (dp[a - c] === Infinity) P(3, `Amount ${a}, coin ${c}: dp[${a - c}] is ∞ — cannot use this coin.`, cls);
-        else if (cand < dp[a]) { const was = dp[a] === Infinity ? '∞' : dp[a]; dp[a] = cand; P(3, `Amount ${a}, coin ${c}: dp[${a - c}] + 1 = ${cand} — better than ${was}.`, cls); }
-        else P(3, `Amount ${a}, coin ${c}: dp[${a - c}] + 1 = ${cand} — not better than ${dp[a]}.`, cls);
+        if (dp[a - c] === Infinity) P(3, T(`Amount ${a}, coin ${c}: dp[${a - c}] is ∞ — cannot use this coin.`, `Số tiền ${a}, đồng ${c}: dp[${a - c}] là ∞ — không dùng được đồng xu này.`), cls);
+        else if (cand < dp[a]) { const was = dp[a] === Infinity ? '∞' : dp[a]; dp[a] = cand; P(3, T(`Amount ${a}, coin ${c}: dp[${a - c}] + 1 = ${cand} — better than ${was}.`, `Số tiền ${a}, đồng ${c}: dp[${a - c}] + 1 = ${cand} — tốt hơn ${was}.`), cls); }
+        else P(3, T(`Amount ${a}, coin ${c}: dp[${a - c}] + 1 = ${cand} — not better than ${dp[a]}.`, `Số tiền ${a}, đồng ${c}: dp[${a - c}] + 1 = ${cand} — không tốt hơn ${dp[a]}.`), cls);
       }
-      if (dp[amount] === Infinity) { P(4, `Amount ${amount} cannot be made with these coins (return -1).`); return st; }
+      if (dp[amount] === Infinity) { P(4, T(`Amount ${amount} cannot be made with these coins (return -1).`, `Không thể tạo số tiền ${amount} bằng các đồng xu này (trả về -1).`)); return st; }
       const path = { [`0,${amount}`]: 'found' }, used = []; let a = amount;
       while (a > 0) { const c = cs.find(c => c <= a && dp[a - c] + 1 === dp[a]); used.push(c); a -= c; path[`0,${a}`] = 'found'; }
-      P(4, `Minimum coins = ${dp[amount]}: ${used.join(' + ')} = ${amount}.`, path);
+      P(4, T(`Minimum coins = ${dp[amount]}: ${used.join(' + ')} = ${amount}.`, `Số đồng xu tối thiểu = ${dp[amount]}: ${used.join(' + ')} = ${amount}.`), path);
       return st;
     },
     problems: [['Coin Change', 'coin-change', 'Medium'], ['Coin Change II', 'coin-change-ii', 'Medium'], ['Perfect Squares', 'perfect-squares', 'Medium'], ['Climbing Stairs', 'climbing-stairs', 'Easy'], ['Min Cost Climbing Stairs', 'min-cost-climbing-stairs', 'Easy'], ['House Robber', 'house-robber', 'Medium']],
@@ -563,16 +564,16 @@
       const P = (line, msg, i, final) => {
         const cls = {}; for (let x = bs; x <= be; x++) cls[x] = final ? 'found' : 'sorted';
         if (!final) for (let x = s; x <= i; x++) cls[x] = 'active';
-        st.push({ line, msg, s: A(a, { mode: 'cells', cls, ptrs: final ? {} : { i }, info: `cur = ${cur} · best = ${best}` }) });
+        st.push({ line, msg, s: A(a, { mode: 'cells', cls, ptrs: final ? {} : { i }, info: T(`cur = ${cur} · best = ${best}`, `cur = ${cur} · tốt nhất = ${best}`) }) });
       };
-      P(0, `Start with the first element: cur = best = ${a[0]}.`, 0);
+      P(0, T(`Start with the first element: cur = best = ${a[0]}.`, `Bắt đầu với phần tử đầu tiên: cur = best = ${a[0]}.`), 0);
       for (let i = 1; i < n; i++) {
         const ext = cur + a[i];
-        if (a[i] > ext) { cur = a[i]; s = i; P(2, `${a[i]} alone is bigger than extending (${ext}) → restart the run here.`, i); }
-        else { cur = ext; P(2, `Extending the run: ${cur - a[i]} + ${a[i]} = ${cur}.`, i); }
-        if (cur > best) { best = cur; bs = s; be = i; P(3, `${cur} is a new best!`, i); } else P(3, `${cur} does not beat best (${best}).`, i);
+        if (a[i] > ext) { cur = a[i]; s = i; P(2, T(`${a[i]} alone is bigger than extending (${ext}) → restart the run here.`, `Riêng ${a[i]} lớn hơn việc nối dài (${ext}) → bắt đầu dãy mới tại đây.`), i); }
+        else { cur = ext; P(2, T(`Extending the run: ${cur - a[i]} + ${a[i]} = ${cur}.`, `Nối dài dãy: ${cur - a[i]} + ${a[i]} = ${cur}.`), i); }
+        if (cur > best) { best = cur; bs = s; be = i; P(3, T(`${cur} is a new best!`, `${cur} là kết quả tốt nhất mới!`), i); } else P(3, T(`${cur} does not beat best (${best}).`, `${cur} không vượt qua best (${best}).`), i);
       }
-      P(4, `Maximum subarray sum = ${best} (indices ${bs}…${be}).`, n - 1, true);
+      P(4, T(`Maximum subarray sum = ${best} (indices ${bs}…${be}).`, `Tổng dãy con lớn nhất = ${best} (chỉ số ${bs}…${be}).`), n - 1, true);
       return st;
     },
     problems: [['Maximum Subarray', 'maximum-subarray', 'Medium'], ['Maximum Product Subarray', 'maximum-product-subarray', 'Medium'], ['Best Time to Buy and Sell Stock', 'best-time-to-buy-and-sell-stock', 'Easy'], ['Maximum Sum Circular Subarray', 'maximum-sum-circular-subarray', 'Medium']],
@@ -593,14 +594,14 @@
         const cls = {}; for (let x = 0; x <= Math.min(reach, n - 1); x++) cls[x] = 'sorted'; cls[i] = bad ? 'swap' : 'active';
         st.push({ line, msg, s: A(a, { mode: 'cells', cls, ptrs: { i, reach: Math.min(reach, n - 1) }, info: `reach = ${reach}` }) });
       };
-      P(0, 'Start with reach = 0: we can only stand on index 0.', 0);
+      P(0, T('Start with reach = 0: we can only stand on index 0.', `Bắt đầu với reach = 0: ta chỉ có thể đứng ở chỉ số 0.`), 0);
       for (let i = 0; i < n; i++) {
-        if (i > reach) { P(2, `Index ${i} is beyond reach (${reach}) — we are stuck, so the last index is unreachable. Return false.`, i, true); return st; }
+        if (i > reach) { P(2, T(`Index ${i} is beyond reach (${reach}) — we are stuck, so the last index is unreachable. Return false.`, `Chỉ số ${i} nằm ngoài tầm với (${reach}) — bị kẹt, nên không thể tới ô cuối. Trả về false.`), i, true); return st; }
         const old = reach; reach = Math.max(reach, i + a[i]);
-        P(3, `From ${i}, jump up to ${a[i]} → reach = max(${old}, ${i} + ${a[i]}) = ${reach}.`, i);
-        if (reach >= n - 1) { P(4, `reach (${reach}) ≥ last index ${n - 1} — we can make it! Return true.`, i); return st; }
+        P(3, T(`From ${i}, jump up to ${a[i]} → reach = max(${old}, ${i} + ${a[i]}) = ${reach}.`, `Từ ${i}, nhảy tối đa ${a[i]} → reach = max(${old}, ${i} + ${a[i]}) = ${reach}.`), i);
+        if (reach >= n - 1) { P(4, T(`reach (${reach}) ≥ last index ${n - 1} — we can make it! Return true.`, `reach (${reach}) ≥ chỉ số cuối ${n - 1} — đến được đích! Trả về true.`), i); return st; }
       }
-      P(5, 'Done.', n - 1); return st;
+      P(5, T('Done.', `Xong.`), n - 1); return st;
     },
     problems: [['Jump Game', 'jump-game', 'Medium'], ['Jump Game II', 'jump-game-ii', 'Medium'], ['Gas Station', 'gas-station', 'Medium'], ['Assign Cookies', 'assign-cookies', 'Easy'], ['Best Time to Buy and Sell Stock II', 'best-time-to-buy-and-sell-stock-ii', 'Medium'], ['Non-overlapping Intervals', 'non-overlapping-intervals', 'Medium']],
   });
@@ -616,20 +617,20 @@
     random() { return { n: pick([5, 6]) }; },
     run({ n }) {
       const q = Array(n).fill(-1), st = []; let found = false;
-      const P = (line, msg, cls = {}) => st.push({ line, msg, s: { type: 'board', n, queens: q.slice(), cls, info: `n = ${n} · queens placed: ${q.filter(x => x >= 0).length}` } });
+      const P = (line, msg, cls = {}) => st.push({ line, msg, s: { type: 'board', n, queens: q.slice(), cls, info: T(`n = ${n} · queens placed: ${q.filter(x => x >= 0).length}`, `n = ${n} · số hậu đã đặt: ${q.filter(x => x >= 0).length}`) } });
       const attacker = (r, c) => { for (let k = 0; k < r; k++) if (q[k] === c || Math.abs(q[k] - c) === r - k) return k; return -1; };
       function place(r) {
-        if (r === n) { found = true; P(1, 'All queens are placed — a valid solution!'); return; }
+        if (r === n) { found = true; P(1, T('All queens are placed — a valid solution!', `Đã đặt đủ các quân hậu — một lời giải hợp lệ!`)); return; }
         for (let c = 0; c < n && !found; c++) {
-          P(2, `Row ${r}: try column ${c}.`, { [`${r},${c}`]: 'try' });
+          P(2, T(`Row ${r}: try column ${c}.`, `Hàng ${r}: thử cột ${c}.`), { [`${r},${c}`]: 'try' });
           const k = attacker(r, c);
-          if (k >= 0) { P(3, `Queen at (${k},${q[k]}) attacks (${r},${c}) — skip.`, { [`${r},${c}`]: 'bad', [`${k},${q[k]}`]: 'bad' }); continue; }
-          q[r] = c; P(4, `Safe! Place a queen at (${r},${c}) and move on to row ${r + 1}.`, { [`${r},${c}`]: 'ok' });
+          if (k >= 0) { P(3, T(`Queen at (${k},${q[k]}) attacks (${r},${c}) — skip.`, `Quân hậu tại (${k},${q[k]}) tấn công (${r},${c}) — bỏ qua.`), { [`${r},${c}`]: 'bad', [`${k},${q[k]}`]: 'bad' }); continue; }
+          q[r] = c; P(4, T(`Safe! Place a queen at (${r},${c}) and move on to row ${r + 1}.`, `An toàn! Đặt hậu tại (${r},${c}) và sang hàng ${r + 1}.`), { [`${r},${c}`]: 'ok' });
           place(r + 1);
-          if (!found) { q[r] = -1; P(6, `Dead end further down — backtrack: remove the queen from row ${r}.`, { [`${r},${c}`]: 'try' }); }
+          if (!found) { q[r] = -1; P(6, T(`Dead end further down — backtrack: remove the queen from row ${r}.`, `Ngõ cụt phía dưới — quay lui: bỏ quân hậu khỏi hàng ${r}.`), { [`${r},${c}`]: 'try' }); }
         }
       }
-      P(0, `Place ${n} queens, one per row, backtracking when stuck.`);
+      P(0, T(`Place ${n} queens, one per row, backtracking when stuck.`, `Đặt ${n} quân hậu, mỗi hàng một quân, quay lui khi bị kẹt.`));
       place(0);
       return st;
     },
