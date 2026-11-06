@@ -460,7 +460,7 @@
     code: L('for i in 1..m: for j in 1..n:', '  if A[i] == B[j]:', '    dp[i][j] = dp[i-1][j-1] + 1', '  else:', '    dp[i][j] = max(dp[i-1][j], dp[i][j-1])', '// walk back from dp[m][n] to rebuild the subsequence'),
     fields: [{ key: 'a', label: 'String A', type: 'text', max: 8 }, { key: 'b', label: 'String B', type: 'text', max: 8 }],
     legend: [['active', 'Cell being filled'], ['compare', 'Cells it depends on'], ['found', 'Traceback path']],
-    random() { return pick([{ a: 'ABCBDAB', b: 'BDCABA' }, { a: 'AGGTAB', b: 'GXTXAYB' }, { a: 'HELLO', b: 'YELLOW' }, { a: 'ALGORITHM', b: 'ALTRUISM' }, { a: 'STONE', b: 'LONGEST' }]); },
+    random() { return pick([{ a: 'ABCBDAB', b: 'BDCABA' }, { a: 'AGGTAB', b: 'GXTXAYB' }, { a: 'HELLO', b: 'YELLOW' }, { a: 'ALGOS', b: 'LOGICS' }, { a: 'STONE', b: 'LONGEST' }]); },
     run({ a, b }) {
       const m = a.length, n = b.length, st = [];
       const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(null));
