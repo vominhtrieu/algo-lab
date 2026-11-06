@@ -31,7 +31,8 @@
   };
   let solved = new Set(store.get('algolab.solved', []));
   const totalProblems = ALGOS.reduce((n, a) => n + a.problems.length, 0);
-  function updateProgress() { $('#progress').textContent = t(`${solved.size} / ${totalProblems} problems`, `${solved.size} / ${totalProblems} bài tập`); }
+  const validKeys = new Set(ALGOS.flatMap(a => a.problems.map(p => `${a.id}|${p[1]}`)));
+  function updateProgress() { const done = [...solved].filter(k => validKeys.has(k)).length; $('#progress').textContent = t(`${done} / ${totalProblems} problems`, `${done} / ${totalProblems} bài tập`); }
 
   /* ---------- sidebar ---------- */
   function buildNav() {

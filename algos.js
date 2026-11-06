@@ -63,7 +63,7 @@
       }
       done.add(0); P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
-    problems: [['Sort Colors', 'sort-colors', 'Medium'], ['Merge Sorted Array', 'merge-sorted-array', 'Easy'], ['Squares of a Sorted Array', 'squares-of-a-sorted-array', 'Easy'], ['Sort an Array', 'sort-an-array', 'Medium']],
+    problems: [['Sort Array By Parity', 'sort-array-by-parity', 'Easy'], ['Sort the People', 'sort-the-people', 'Easy'], ['Sort Integers by The Number of 1 Bits', 'sort-integers-by-the-number-of-1-bits', 'Easy'], ['Sort an Array', 'sort-an-array', 'Medium']],
   });
 
   ALGOS.push({
@@ -89,7 +89,7 @@
       }
       done.add(n - 1); P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
-    problems: [['Kth Largest Element in an Array', 'kth-largest-element-in-an-array', 'Medium'], ['Relative Sort Array', 'relative-sort-array', 'Easy'], ['Height Checker', 'height-checker', 'Easy'], ['Sort Colors', 'sort-colors', 'Medium']],
+    problems: [['Kth Largest Element in an Array', 'kth-largest-element-in-an-array', 'Medium'], ['Relative Sort Array', 'relative-sort-array', 'Easy'], ['Height Checker', 'height-checker', 'Easy'], ['Minimum Absolute Difference', 'minimum-absolute-difference', 'Easy']],
   });
 
   ALGOS.push({
@@ -113,7 +113,7 @@
       }
       cur = n; P(0, T('Sorted!', `Đã sắp xếp xong!`)); return st;
     },
-    problems: [['Insertion Sort List', 'insertion-sort-list', 'Medium'], ['Sort List', 'sort-list', 'Medium'], ['Largest Number', 'largest-number', 'Medium'], ['Sort Colors', 'sort-colors', 'Medium']],
+    problems: [['Insertion Sort List', 'insertion-sort-list', 'Medium'], ['Sort List', 'sort-list', 'Medium'], ['Largest Number', 'largest-number', 'Medium'], ['Sort Array by Increasing Frequency', 'sort-array-by-increasing-frequency', 'Easy']],
   });
 
   ALGOS.push({
@@ -152,7 +152,7 @@
       const c = {}; for (let x = 0; x < n; x++) c[x] = 'sorted'; st.push({ line: 0, msg: T('Sorted!', `Đã sắp xếp xong!`), s: A(a, { cls: c }) });
       return st;
     },
-    problems: [['Sort List', 'sort-list', 'Medium'], ['Merge Two Sorted Lists', 'merge-two-sorted-lists', 'Easy'], ['Merge k Sorted Lists', 'merge-k-sorted-lists', 'Hard'], ['Count of Smaller Numbers After Self', 'count-of-smaller-numbers-after-self', 'Hard'], ['Reverse Pairs', 'reverse-pairs', 'Hard']],
+    problems: [['Merge Sorted Array', 'merge-sorted-array', 'Easy'], ['Sort List', 'sort-list', 'Medium'], ['Merge Two Sorted Lists', 'merge-two-sorted-lists', 'Easy'], ['Merge k Sorted Lists', 'merge-k-sorted-lists', 'Hard'], ['Count of Smaller Numbers After Self', 'count-of-smaller-numbers-after-self', 'Hard'], ['Reverse Pairs', 'reverse-pairs', 'Hard']],
   });
 
   ALGOS.push({
@@ -301,7 +301,7 @@
       P(6, T('The pointers met — no pair adds up to the target.', `Hai con trỏ gặp nhau — không có cặp nào có tổng bằng mục tiêu.`));
       return st;
     },
-    problems: [['Two Sum II – Input Array Is Sorted', 'two-sum-ii-input-array-is-sorted', 'Medium'], ['Valid Palindrome', 'valid-palindrome', 'Easy'], ['3Sum', '3sum', 'Medium'], ['Container With Most Water', 'container-with-most-water', 'Medium'], ['Trapping Rain Water', 'trapping-rain-water', 'Hard']],
+    problems: [['Two Sum II – Input Array Is Sorted', 'two-sum-ii-input-array-is-sorted', 'Medium'], ['Valid Palindrome', 'valid-palindrome', 'Easy'], ['3Sum', '3sum', 'Medium'], ['Container With Most Water', 'container-with-most-water', 'Medium'], ['Squares of a Sorted Array', 'squares-of-a-sorted-array', 'Easy'], ['Trapping Rain Water', 'trapping-rain-water', 'Hard']],
   });
 
   ALGOS.push({
